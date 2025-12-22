@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import { logout } from "@/store/slices/authSlice";
 import { useTranslation } from "react-i18next";
+import { authApi } from "@/apis/auth.api";
+import { API_BASE_URL } from "@/constants/constants";
 
 export const UserDropdown = () => {
   const navigate = useNavigate();
@@ -12,9 +14,12 @@ export const UserDropdown = () => {
   const user = useAppSelector((state) => state.auth.user);
   const { t } = useTranslation();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
+  const handleLogout = async () => {
+    const response = await authApi.logout();
+    if (response.code === 200) {
+      dispatch(logout());
+      navigate("/login");
+    }
   };
 
   const items: MenuProps["items"] = [
@@ -45,8 +50,8 @@ export const UserDropdown = () => {
   return (
     <Dropdown menu={{ items }} trigger={["click"]} placement="bottomRight">
       <Button type="text" size="large" className="flex items-center gap-2 h-auto px-2">
-        <Avatar size="large" icon={<UserOutlined />} src={user?.avatar} />
-        <span className="hidden md:inline text-sm font-medium">{user?.name || "Admin User"}</span>
+        <Avatar size="large" icon={<UserOutlined />} alt="avatar" src={`${API_BASE_URL}/${user?.avatar}`} />
+        <span className="hidden md:inline text-sm font-medium">{user?.ho_va_ten || "Admin User"}</span>
       </Button>
     </Dropdown>
   );

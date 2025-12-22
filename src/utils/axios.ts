@@ -18,6 +18,9 @@ axiosInstance.interceptors.request.use(
     // Get token from Redux store
     const state = store.getState();
     const token = state.auth.user?.token;
+    const deviceId = 1;
+
+    config.headers.device_id = deviceId;
 
     // Add token to headers if it exists
     if (token) {
@@ -30,7 +33,7 @@ axiosInstance.interceptors.request.use(
       _t: Date.now()
     };
 
-    console.log("🚀 API Request:", config.method?.toUpperCase(), config.url);
+    console.log("API Request:", config.method?.toUpperCase(), config.url);
     return config;
   },
   (error: AxiosError) => {

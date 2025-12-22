@@ -38,7 +38,7 @@ export const createUserColumns = (
     title: t("table.stt"),
     dataIndex: "stt",
     align: "right",
-    render: (_text, _record, index) => pagination.current * pagination.pageSize + index + 1,
+    render: (_text, _record, index) => (pagination.current - 1) * pagination.pageSize + index + 1,
     width: 50
   },
   {

@@ -492,7 +492,8 @@ export const mockProductApi = {
       category: productData.category,
       description: productData.description,
       status: productData.status || "active",
-      createdAt: new Date().toISOString().split("T")[0]
+      createdAt: "2025-12-22",
+      updatedAt: "2025-12-22"
     };
 
     productDataStore.push(newProduct);
@@ -558,10 +559,29 @@ export const mockAuthApi = {
 
     // Simulate successful login
     const user = {
-      id: "1",
-      name: email.split("@")[0].charAt(0).toUpperCase() + email.split("@")[0].slice(1),
-      email: email,
-      role: (email.includes("admin") ? "admin" : "user") as "admin" | "moderator" | "user",
+      id: 2,
+      nguoi_tao: 1,
+      ngay_tao: "2024-05-22T02:31:58.000Z",
+      nguoi_cap_nhat: 1000,
+      ngay_cap_nhat: "2025-07-27T11:43:23.000Z",
+      tai_khoan: "duy_hnp",
+      email: "huynhduylp@gmail.com",
+      ma_vai_tro: "Admin",
+      ho: "Huỳnh Nguyễn",
+      ten: "Phương Duy",
+      ho_va_ten: "Huỳnh Nguyễn Phương Duy",
+      ngay_sinh: "1999-02-05",
+      gioi_tinh: 1,
+      dia_chi: "Trên Cây",
+      tinh_id: 7210,
+      huyen_id: 59489,
+      xa_id: 1448619,
+      trang_thai: 1,
+      need_change_password: 0,
+      so_dien_thoai: "0939227225",
+      phan_quyen: "",
+      ten_vai_tro: "Admin",
+      token: 1,
       avatar: "https://res.cloudinary.com/dn2y3fyv8/image/upload/v1762482957/Screenshot_2025-11-07_093403_oe4lf7.png"
     };
 

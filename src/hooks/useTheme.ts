@@ -65,6 +65,10 @@ export const useTheme = () => {
           headerBg: themeMode === "dark" ? "#1f2937" : "#f5f7fa",
           headerColor: themeMode === "dark" ? "#fff" : "#0ea5e9",
           colorIcon: themeMode === "dark" ? "#fff" : "#000"
+        },
+        Form: {
+          verticalLabelPadding: 0,
+          itemMarginBottom: 20
         }
       }
     }),

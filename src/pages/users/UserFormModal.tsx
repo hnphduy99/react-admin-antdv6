@@ -33,7 +33,8 @@ export const UserFormModal = ({ open, editingUser, loading, form, onOk, onCancel
       onOk={onOk}
       onCancel={onCancel}
       confirmLoading={loading}
-      width={600}
+      centered
+      width={800}
       okText={t("common.save")}
       cancelText={t("common.cancel")}
     >

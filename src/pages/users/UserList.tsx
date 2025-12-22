@@ -21,16 +21,13 @@ interface UserData {
 export const UserList = () => {
   const { t } = useTranslation();
 
-  // Use generic CRUD hook with User-specific config
   const {
     data,
-    searchText,
     loading,
     isModalOpen,
     editingItem,
     form,
     pagination,
-    setSearchText,
     handleSearch,
     handleColumnSearch,
     handleAdd,
@@ -64,9 +61,7 @@ export const UserList = () => {
               placeholder={t("table.searchPlaceholder")}
               prefix={<SearchOutlined />}
               allowClear
-              value={searchText}
               onChange={(e) => {
-                setSearchText(e.target.value);
                 debouncedSearch(e.target.value);
               }}
               className="w-64"

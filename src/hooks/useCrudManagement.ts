@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { message, Form } from "antd";
+import { PER_PAGE } from "@/constants/constants";
+import { useNotification } from "@/contexts/NotificationContext";
+import { Form } from "antd";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface CrudApiService<T> {
   getAll?: (page: number, pageSize: number, search?: string, columnSearches?: Record<string, string>) => Promise<any>;
@@ -11,8 +13,8 @@ interface CrudApiService<T> {
 
 interface CrudConfig<T> {
   apiService: CrudApiService<T>;
-  entityName: string; // "User", "Product", "Order", etc.
-  onView?: (item: T) => void; // Optional custom view handler
+  entityName: string;
+  onView?: (item: T) => void;
 }
 
 export interface PaginationConfig {
@@ -41,9 +43,10 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
   const [form] = Form.useForm();
   const [pagination, setPagination] = useState<PaginationConfig>({
     current: 1,
-    pageSize: 10,
+    pageSize: PER_PAGE,
     total: 0
   });
+  const notification = useNotification();
 
   // Memoize config to prevent recreation on every render
   const { apiService, entityName, onView } = useMemo(
@@ -76,12 +79,12 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
           });
         }
       } catch (error: any) {
-        message.error(error.message || `Failed to load ${entityName}s`);
+        notification.error({ title: "Error", description: error.message || `Failed to load ${entityName}s` });
       } finally {
         setLoading(false);
       }
     },
-    [apiService, entityName]
+    [apiService, entityName, notification]
   );
 
   useEffect(() => {
@@ -138,11 +141,14 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
       const response = await apiService.delete(id);
 
       if (response.success) {
-        message.success(response.message || `${entityName} deleted successfully`);
+        notification.success({
+          title: "Success",
+          description: response.message || `${entityName} deleted successfully`
+        });
         await fetchData(pagination.current, pagination.pageSize, searchText, columnSearches);
       }
     } catch (error: any) {
-      message.error(error.message || `Failed to delete ${entityName}`);
+      notification.error({ title: "Error", description: error.message || `Failed to delete ${entityName}` });
     } finally {
       setLoading(false);
     }
@@ -158,13 +164,19 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
         // Update existing item
         const response = await apiService.update(editingItem.id, values);
         if (response.success) {
-          message.success(response.message || `${entityName} updated successfully`);
+          notification.success({
+            title: "Success",
+            description: response.message || `${entityName} updated successfully`
+          });
         }
       } else {
         // Create new item
         const response = await apiService.create(values);
         if (response.success) {
-          message.success(response.message || `${entityName} created successfully`);
+          notification.success({
+            title: "Success",
+            description: response.message || `${entityName} created successfully`
+          });
         }
       }
 
@@ -176,7 +188,7 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
         // Form validation errors
         return;
       }
-      message.error(error.message || "Operation failed");
+      notification.error({ title: "Error", description: error.message || "Operation failed" });
     } finally {
       setLoading(false);
     }
@@ -193,7 +205,7 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
     if (onView) {
       onView(record);
     } else {
-      message.info(`View ${entityName}: ${(record as any).name || record.id}`);
+      notification.info({ title: "Info", description: `View ${entityName}: ${(record as any).name || record.id}` });
     }
   };
 

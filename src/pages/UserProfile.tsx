@@ -30,10 +30,10 @@ export const UserProfile = () => {
         <Card title={t("user.userProfile")} className="shadow-sm mb-6">
           <div className="flex flex-col items-center mb-6">
             <Avatar size={160} icon={<UserOutlined />} src={user?.avatar} />
-            <h2 className="text-xl font-semibold mt-4">{user?.name || "Admin User"}</h2>
+            <h2 className="text-xl font-semibold mt-4">{user?.ho_va_ten || "Admin User"}</h2>
             <p className="text-gray-500">{user?.email}</p>
             <p className="text-sm text-gray-400 mt-2">
-              {t("user.role")}: {user?.role || "Admin"}
+              {t("user.role")}: {user?.ma_vai_tro || "Admin"}
             </p>
           </div>
 
@@ -52,13 +52,13 @@ export const UserProfile = () => {
             layout="vertical"
             onFinish={onFinish}
             initialValues={{
-              name: user?.name || "Admin User",
+              name: user?.ho_va_ten || "Admin User",
               email: user?.email || "admin@example.com",
-              phone: "+1 (555) 123-4567",
+              phone: user?.so_dien_thoai || "",
               country: "usa",
               city: "New York",
-              address: "123 Main Street, Apt 4B",
-              role: user?.role || "admin"
+              address: user?.dia_chi || "",
+              role: user?.ma_vai_tro || "admin"
             }}
           >
             <Row gutter={16}>

@@ -94,10 +94,6 @@ body {
   overflow-x: auto;
 }
 
-.ant-form-item {
-  margin-bottom: 20px;
-}
-
 /* menu */
 .ant-menu-light:not(.ant-menu-horizontal) .ant-menu-submenu-title:hover {
   color: #ffb765;
