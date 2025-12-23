@@ -1,19 +1,10 @@
 import type { PaginationConfig } from "@/hooks/useCrudManagement";
+import type { IUser } from "@/interfaces/user.interface";
 import { getColumnDateTimeProps, getColumnInputSearchProps, getColumnSelectProps } from "@/utils/tableSearchHelper";
 import { DeleteOutlined, EditOutlined, EyeOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  role: "admin" | "user" | "moderator";
-  status: "active" | "inactive";
-  joinDate: string;
-  avatar?: string;
-}
 
 export const getRoleColor = (role: string) => {
   switch (role) {
@@ -28,12 +19,12 @@ export const getRoleColor = (role: string) => {
 
 export const createUserColumns = (
   t: any,
-  handleView: (record: UserData) => void,
-  handleEdit: (record: UserData) => void,
-  handleDelete: (id: string) => void,
+  handleView: (record: IUser) => void,
+  handleEdit: (id: string | number) => void,
+  handleDelete: (id: string | number) => void,
   handleColumnSearch: (value: string, column: string) => void,
   pagination: PaginationConfig
-): ColumnsType<UserData> => [
+): ColumnsType<IUser> => [
   {
     title: t("table.stt"),
     dataIndex: "stt",
@@ -43,10 +34,10 @@ export const createUserColumns = (
   },
   {
     title: t("table.name"),
-    dataIndex: "name",
-    key: "name",
-    ...getColumnInputSearchProps<UserData>({
-      dataIndex: "name",
+    dataIndex: "ho_va_ten",
+    key: "ho_va_ten",
+    ...getColumnInputSearchProps<IUser>({
+      dataIndex: "ho_va_ten",
       placeholder: t("table.searchName"),
       onSearch: handleColumnSearch
     }),
@@ -61,11 +52,21 @@ export const createUserColumns = (
     )
   },
   {
+    title: t("table.username"),
+    dataIndex: "tai_khoan",
+    key: "tai_khoan",
+    ...getColumnInputSearchProps<IUser>({
+      dataIndex: "tai_khoan",
+      placeholder: t("table.searchUsername"),
+      onSearch: handleColumnSearch
+    })
+  },
+  {
     title: t("user.role"),
-    dataIndex: "role",
-    key: "role",
-    ...getColumnSelectProps<UserData>({
-      dataIndex: "role",
+    dataIndex: "ten_vai_tro",
+    key: "ten_vai_tro",
+    ...getColumnSelectProps<IUser>({
+      dataIndex: "ten_vai_tro",
       placeholder: "Select role",
       options: [
         { label: "Admin", value: "admin" },
@@ -74,15 +75,15 @@ export const createUserColumns = (
       ],
       onSearch: handleColumnSearch
     }),
-    render: (role: string) => <Tag color={getRoleColor(role)}>{t(`user.${role}`).toUpperCase()}</Tag>,
+    render: (role: string) => <Tag color={getRoleColor(role)}>{role.toUpperCase()}</Tag>,
     width: 150
   },
   {
     title: t("table.status"),
-    key: "status",
-    dataIndex: "status",
-    ...getColumnSelectProps<UserData>({
-      dataIndex: "status",
+    key: "trang_thai",
+    dataIndex: "trang_thai",
+    ...getColumnSelectProps<IUser>({
+      dataIndex: "trang_thai",
       placeholder: "Select status",
       options: [
         { label: "Active", value: "active" },
@@ -90,23 +91,23 @@ export const createUserColumns = (
       ],
       onSearch: handleColumnSearch
     }),
-    render: (status: string) => (
-      <Tag color={status === "active" ? "green" : "red"}>{t(`table.${status}`).toUpperCase()}</Tag>
+    render: (status: number) => (
+      <Tag color={status === 1 ? "green" : "red"}>{status === 1 ? "ACTIVE" : "INACTIVE"}</Tag>
     ),
     width: 150
   },
   {
     title: t("user.joinDate"),
-    dataIndex: "joinDate",
-    key: "joinDate",
-    ...getColumnDateTimeProps<UserData>({
-      dataIndex: "createdAt",
+    dataIndex: "ngay_tao",
+    key: "ngay_tao",
+    ...getColumnDateTimeProps<IUser>({
+      dataIndex: "ngay_tao",
       placeholder: "Ngày tạo",
       mode: "single",
       onSearch: handleColumnSearch
     }),
     align: "right",
-    render: (joinDate) => dayjs(joinDate).format("DD/MM/YYYY"),
+    render: (joinDate) => dayjs(joinDate).format("DD/MM/YYYY HH:mm"),
     width: 150
   },
   {
@@ -115,7 +116,7 @@ export const createUserColumns = (
     render: (_, record) => (
       <Space size={0}>
         <Button type="link" icon={<EyeOutlined />} onClick={() => handleView(record)} />
-        <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+        <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record.id)} />
         <Popconfirm
           title={t("table.deleteConfirm")}
           onConfirm={() => handleDelete(record.id)}

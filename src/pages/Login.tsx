@@ -1,17 +1,18 @@
-import { useState } from "react";
-import { Card, Form, Input, Button, Checkbox, Typography, message } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { authApi } from "@/apis/auth.api";
 import { useAppDispatch } from "@/hooks/useRedux";
+import { useNotification } from "@/providers/NotificationProvider";
 import { login } from "@/store/slices/authSlice";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Card, Checkbox, Form, Input, Typography } from "antd";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { mockApi } from "@/services/mock";
+import { Link, useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
 interface LoginFormValues {
-  email: string;
-  password: string;
+  tai_khoan: string;
+  mat_khau: string;
   remember: boolean;
 }
 
@@ -21,28 +22,34 @@ export const Login = () => {
   const dispatch = useAppDispatch();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const notification = useNotification();
 
   const handleLogin = async (values: LoginFormValues) => {
     try {
       setLoading(true);
 
       // Call API to authenticate
-      const response = await mockApi.auth.login(values.email, values.password);
+      const response = await authApi.login(values.tai_khoan, values.mat_khau);
 
-      if (response.success) {
-        // Dispatch to Redux store
-        dispatch(
-          login({
-            ...response.data.user,
-            token: response.data.token
-          })
-        );
+      if (response.code === 200) {
+        dispatch(login(response.data));
 
-        message.success(response.message || "Login successful!");
+        notification.success({
+          title: "Login successful!",
+          message: response.message || "Login successful!"
+        });
         navigate("/dashboard");
+      } else {
+        notification.error({
+          title: "Login failed!",
+          message: response.message || "Login failed. Please try again."
+        });
       }
     } catch (error: any) {
-      message.error(error.message || "Login failed. Please try again.");
+      notification.error({
+        title: "Login failed!",
+        message: error.message || "Login failed. Please try again."
+      });
     } finally {
       setLoading(false);
     }
@@ -55,31 +62,21 @@ export const Login = () => {
         <Text type="secondary">Sign in to your account to continue</Text>
       </div>
 
-      <Form
-        form={form}
-        name="login"
-        onFinish={handleLogin}
-        layout="vertical"
-        requiredMark={false}
-        initialValues={{ remember: true }}
-      >
+      <Form form={form} name="login" onFinish={handleLogin} layout="vertical" initialValues={{ remember: true }}>
         <Form.Item
-          name="email"
-          label="Email"
-          rules={[
-            { required: true, message: "Please input your email!" },
-            { type: "email", message: "Please enter a valid email!" }
-          ]}
+          name="tai_khoan"
+          label={t("auth.user_name")}
+          rules={[{ required: true, message: `Please input your ${t("auth.user_name").toLowerCase()}` }]}
         >
-          <Input prefix={<UserOutlined />} placeholder="admin@example.com" size="large" />
+          <Input prefix={<UserOutlined />} placeholder={t("auth.user_name")} size="large" />
         </Form.Item>
 
         <Form.Item
-          name="password"
-          label="Password"
-          rules={[{ required: true, message: "Please input your password!" }]}
+          name="mat_khau"
+          label={t("auth.password")}
+          rules={[{ required: true, message: `Please input your ${t("auth.password").toLowerCase()}` }]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="Enter your password" size="large" />
+          <Input.Password prefix={<LockOutlined />} placeholder={t("auth.password")} size="large" />
         </Form.Item>
 
         <Form.Item>

@@ -86,10 +86,6 @@ body {
   overflow-x: auto;
 }
 
-.ant-spin-nested-loading {
-  min-height: 200px;
-}
-
 .ant-table-wrapper {
   overflow-x: auto;
 }

@@ -1,14 +1,21 @@
+import type { ApiResponse } from "@/apis/auth.api";
+import type { PaginatedResponse } from "@/apis/user.api";
 import { PER_PAGE } from "@/constants/constants";
 import { useNotification } from "@/providers/NotificationProvider";
 import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface CrudApiService<T> {
-  getAll?: (page: number, pageSize: number, search?: string, columnSearches?: Record<string, string>) => Promise<any>;
-  getById?: (id: string) => Promise<any>;
-  create: (data: Partial<T>) => Promise<any>;
-  update: (id: string, data: Partial<T>) => Promise<any>;
-  delete: (id: string) => Promise<any>;
+  getAll?: (
+    page: number,
+    pageSize: number,
+    search?: string,
+    columnSearches?: Record<string, string>
+  ) => Promise<ApiResponse<PaginatedResponse<T>>>;
+  getById?: (id: string | number) => Promise<ApiResponse<T>>;
+  create: (data: T) => Promise<ApiResponse<T>>;
+  update: (id: string | number, data: T) => Promise<ApiResponse<T>>;
+  delete: (id: string | number) => Promise<ApiResponse<T>>;
 }
 
 interface CrudConfig<T> {
@@ -33,7 +40,7 @@ export interface PaginationConfig {
  *   entityName: "User"
  * });
  */
-export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T>) => {
+export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T>) => {
   const [data, setData] = useState<T[]>([]);
   const [searchText, setSearchText] = useState("");
   const [columnSearches, setColumnSearches] = useState<Record<string, string>>({}); // Column-specific searches
@@ -70,11 +77,11 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
         setLoading(true);
         const response = await apiService.getAll(page, pageSize, search, colSearches);
 
-        if (response.success) {
-          setData(response.data.data);
+        if (response.code === 200) {
+          setData(response.data.collection);
           setPagination({
-            current: response.data.page,
-            pageSize: response.data.pageSize,
+            current: response.data.current_page,
+            pageSize: PER_PAGE,
             total: response.data.total
           });
         }
@@ -128,19 +135,34 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
   };
 
   // Open edit modal
-  const handleEdit = (record: T) => {
-    setEditingItem(record);
-    form.setFieldsValue(record);
-    setIsModalOpen(true);
+  const handleEdit = async (id: string | number) => {
+    try {
+      setLoading(true);
+      if (!apiService.getById) {
+        console.warn("getById method not provided in apiService");
+        return;
+      }
+      const response = await apiService.getById(id);
+
+      if (response.code === 200) {
+        setEditingItem(response.data);
+        form.setFieldsValue(response.data);
+        setIsModalOpen(true);
+      }
+    } catch (error: any) {
+      notification.error({ title: "Error", description: error.message || `Failed to load ${entityName}` });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle delete
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string | number) => {
     try {
       setLoading(true);
       const response = await apiService.delete(id);
 
-      if (response.success) {
+      if (response.code === 200) {
         notification.success({
           title: "Success",
           description: response.message || `${entityName} deleted successfully`
@@ -163,7 +185,7 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
       if (editingItem) {
         // Update existing item
         const response = await apiService.update(editingItem.id, values);
-        if (response.success) {
+        if (response.code === 200) {
           notification.success({
             title: "Success",
             description: response.message || `${entityName} updated successfully`
@@ -172,7 +194,7 @@ export const useCrudManagement = <T extends { id: string }>(config: CrudConfig<T
       } else {
         // Create new item
         const response = await apiService.create(values);
-        if (response.success) {
+        if (response.code === 200) {
           notification.success({
             title: "Success",
             description: response.message || `${entityName} created successfully`

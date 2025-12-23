@@ -1,22 +1,13 @@
 import { Modal, Form, Input, Select, Row, Col } from "antd";
 import { UserOutlined, MailOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import type { IUser } from "@/interfaces/user.interface";
 
 const { Option } = Select;
 
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  role: "admin" | "user" | "moderator";
-  status: "active" | "inactive";
-  joinDate: string;
-  avatar?: string;
-}
-
 interface UserFormModalProps {
   open: boolean;
-  editingUser: UserData | null;
+  editingUser: IUser | null;
   loading: boolean;
   form: any;
   onOk: () => void;
@@ -42,7 +33,7 @@ export const UserFormModal = ({ open, editingUser, loading, form, onOk, onCancel
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="name"
+              name="ho_va_ten"
               label={t("table.name")}
               rules={[{ required: true, message: t("validation.nameRequired") }]}
             >
@@ -65,9 +56,13 @@ export const UserFormModal = ({ open, editingUser, loading, form, onOk, onCancel
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="role" label={t("user.role")} rules={[{ required: true, message: "Please select a role" }]}>
+            <Form.Item
+              name="ma_vai_tro"
+              label={t("user.role")}
+              rules={[{ required: true, message: "Please select a role" }]}
+            >
               <Select placeholder="Select role">
-                <Option value="admin">{t("user.admin")}</Option>
+                <Option value="Admin">{t("user.admin")}</Option>
                 <Option value="moderator">{t("user.moderator")}</Option>
                 <Option value="user">{t("user.user")}</Option>
               </Select>
@@ -75,14 +70,14 @@ export const UserFormModal = ({ open, editingUser, loading, form, onOk, onCancel
           </Col>
           <Col span={12}>
             <Form.Item
-              name="status"
+              name="trang_thai"
               label={t("table.status")}
               rules={[{ required: true, message: "Please select status" }]}
-              initialValue="active"
+              initialValue={1}
             >
               <Select placeholder="Select status">
-                <Option value="active">{t("table.active")}</Option>
-                <Option value="inactive">{t("table.inactive")}</Option>
+                <Option value={1}>{t("table.active")}</Option>
+                <Option value={0}>{t("table.inactive")}</Option>
               </Select>
             </Form.Item>
           </Col>

@@ -30,6 +30,7 @@ export default {
     login: "Đăng nhập",
     register: "Đăng ký",
     email: "Email",
+    user_name: "Tài khoản",
     password: "Mật khẩu",
     confirmPassword: "Xác nhận mật khẩu",
     rememberMe: "Ghi nhớ đăng nhập",

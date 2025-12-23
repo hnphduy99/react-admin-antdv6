@@ -1,22 +1,13 @@
+import { userApi } from "@/apis/user.api";
 import CustomTable from "@/components/customize/CustomTable";
 import { useCrudManagement } from "@/hooks/useCrudManagement";
 import { useDebounce } from "@/hooks/useDebounce";
-import { mockApi } from "@/services/mock";
+import type { IUser } from "@/interfaces/user.interface";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Card, Input, Space } from "antd";
 import { useTranslation } from "react-i18next";
 import { UserFormModal } from "./UserFormModal";
 import { createUserColumns } from "./userColumns";
-
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  role: "admin" | "user" | "moderator";
-  status: "active" | "inactive";
-  joinDate: string;
-  avatar?: string;
-}
 
 export const UserList = () => {
   const { t } = useTranslation();
@@ -37,14 +28,15 @@ export const UserList = () => {
     handleTableChange,
     handleModalOk,
     handleModalCancel
-  } = useCrudManagement<UserData>({
+  } = useCrudManagement<IUser>({
     apiService: {
-      getAll: mockApi.user.getUsers,
-      create: mockApi.user.createUser,
-      update: mockApi.user.updateUser,
-      delete: mockApi.user.deleteUser
+      getAll: userApi.getUserList,
+      getById: userApi.getUserById,
+      create: userApi.createUser,
+      update: userApi.updateUser,
+      delete: userApi.deleteUser
     },
-    entityName: "User"
+    entityName: "Users"
   });
 
   const debouncedSearch = useDebounce(handleSearch, 500);
