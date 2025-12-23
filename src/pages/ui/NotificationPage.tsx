@@ -1,4 +1,4 @@
-import { useNotification } from "@/contexts/NotificationContext";
+import { useNotification } from "@/providers/NotificationProvider";
 import { Button, Card, Flex } from "antd";
 
 export default function NotificationPage() {

@@ -1,5 +1,5 @@
 import { PER_PAGE } from "@/constants/constants";
-import { useNotification } from "@/contexts/NotificationContext";
+import { useNotification } from "@/providers/NotificationProvider";
 import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 

@@ -1,7 +1,7 @@
 import { useTheme } from "@/hooks/useTheme";
 import { AppRoutes } from "@/routes";
 import { ConfigProvider } from "antd";
-import { NotificationProvider } from "./contexts/NotificationContext";
+import { NotificationProvider } from "./providers/NotificationProvider";
 
 function App() {
   const { antdTheme } = useTheme();
