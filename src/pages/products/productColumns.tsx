@@ -3,7 +3,8 @@ import type { Product } from "@/types";
 import {
   getColumnDateTimeProps,
   getColumnInputSearchProps,
-  getColumnNumberRangeProps
+  getColumnNumberRangeProps,
+  type ColumnSearchValue
 } from "@/utils/tableSearchHelper";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Tag } from "antd";
@@ -26,14 +27,14 @@ export const createProductColumns = (
   handleView: (record: Product) => void,
   handleEdit: (record: Product) => void,
   handleDelete: (id: string) => void,
-  handleColumnSearch: (value: string, column: string) => void,
+  handleColumnSearch: (value: ColumnSearchValue | null, column: string) => void,
   pagination: PaginationConfig
 ): ColumnsType<Product> => [
   {
     title: t("table.stt"),
     dataIndex: "stt",
     align: "right",
-    render: (_text, _record, index) => pagination.current * pagination.pageSize + index + 1,
+    render: (_text, _record, index) => pagination.current * pagination.limit + index + 1,
     width: 50
   },
   {
@@ -43,7 +44,8 @@ export const createProductColumns = (
     ...getColumnInputSearchProps<Product>({
       dataIndex: "name",
       placeholder: t("product.searchProduct"),
-      onSearch: handleColumnSearch
+      onSearch: handleColumnSearch,
+      operator: "contain"
     }),
     render: (name) => <span className="font-medium">{name}</span>
   },
@@ -55,7 +57,8 @@ export const createProductColumns = (
       dataIndex: "price",
       minPlaceholder: t("product.minPrice"),
       maxPlaceholder: t("product.maxPrice"),
-      onSearch: handleColumnSearch
+      onSearch: handleColumnSearch,
+      operator: "between"
     }),
     render: (price) => price.toFixed(2),
     align: "right",
@@ -107,7 +110,8 @@ export const createProductColumns = (
       dataIndex: "createdAt",
       placeholder: "Ngày tạo",
       mode: "single",
-      onSearch: handleColumnSearch
+      onSearch: handleColumnSearch,
+      operator: "equal"
     }),
     align: "right",
     render: (createdAt) => dayjs(createdAt).format("DD/MM/YYYY"),

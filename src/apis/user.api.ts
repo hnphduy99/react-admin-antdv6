@@ -2,6 +2,7 @@ import { COLUMN_SORT, DIRECTION_SORT, PER_PAGE } from "@/constants/constants";
 import type { IUser } from "@/interfaces/user.interface";
 import axiosInstance from "@/utils/axios";
 import type { ApiResponse } from "./auth.api";
+import type { ColumnSearchItem } from "@/hooks/useCrudManagement";
 
 export interface PaginatedResponse<T> {
   collection: T[];
@@ -17,14 +18,13 @@ export interface PaginatedResponse<T> {
 export const userApi = {
   getUserList: async (
     page: number = 1,
-    pageSize: number = PER_PAGE,
-    search?: string,
-    colSearches: Record<string, string> = {},
-    columnSort: string = COLUMN_SORT,
-    directionSort: string = DIRECTION_SORT
+    limit: number = PER_PAGE,
+    f?: ColumnSearchItem[],
+    column_sort: string = COLUMN_SORT,
+    direction_sort: string = DIRECTION_SORT
   ) => {
     const response = await axiosInstance.get<ApiResponse<PaginatedResponse<IUser>>>("/users", {
-      params: { page, pageSize, columnSort, directionSort, search, colSearches }
+      params: { page, limit, column_sort, direction_sort, f }
     });
     return response.data;
   },

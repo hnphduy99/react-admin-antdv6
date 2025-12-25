@@ -1,6 +1,11 @@
 import type { PaginationConfig } from "@/hooks/useCrudManagement";
 import type { IUser } from "@/interfaces/user.interface";
-import { getColumnDateTimeProps, getColumnInputSearchProps, getColumnSelectProps } from "@/utils/tableSearchHelper";
+import {
+  getColumnDateTimeProps,
+  getColumnInputSearchProps,
+  getColumnSelectProps,
+  type ColumnSearchValue
+} from "@/utils/tableSearchHelper";
 import { DeleteOutlined, EditOutlined, EyeOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
@@ -22,14 +27,14 @@ export const createUserColumns = (
   handleView: (record: IUser) => void,
   handleEdit: (id: string | number) => void,
   handleDelete: (id: string | number) => void,
-  handleColumnSearch: (value: string, column: string) => void,
+  handleColumnSearch: (value: ColumnSearchValue | null, column: string) => void,
   pagination: PaginationConfig
 ): ColumnsType<IUser> => [
   {
     title: t("table.stt"),
     dataIndex: "stt",
     align: "right",
-    render: (_text, _record, index) => (pagination.current - 1) * pagination.pageSize + index + 1,
+    render: (_text, _record, index) => (pagination.current - 1) * pagination.limit + index + 1,
     width: 50
   },
   {
@@ -38,8 +43,10 @@ export const createUserColumns = (
     key: "ho_va_ten",
     ...getColumnInputSearchProps<IUser>({
       dataIndex: "ho_va_ten",
-      placeholder: t("table.searchName"),
-      onSearch: handleColumnSearch
+      onSearch: handleColumnSearch,
+      placeholder: "Tìm họ và tên",
+      operator: "contain",
+      showSearch: "both"
     }),
     render: (name, record) => (
       <div className="flex items-center gap-3">
@@ -57,25 +64,28 @@ export const createUserColumns = (
     key: "tai_khoan",
     ...getColumnInputSearchProps<IUser>({
       dataIndex: "tai_khoan",
-      placeholder: t("table.searchUsername"),
-      onSearch: handleColumnSearch
+      onSearch: handleColumnSearch,
+      operator: "contain",
+      placeholder: "Tìm tài khoản",
+      showSearch: "top"
     })
   },
   {
     title: t("user.role"),
-    dataIndex: "ten_vai_tro",
-    key: "ten_vai_tro",
+    dataIndex: "ma_vai_tro",
+    key: "ma_vai_tro",
     ...getColumnSelectProps<IUser>({
-      dataIndex: "ten_vai_tro",
+      dataIndex: "ma_vai_tro",
       placeholder: "Select role",
       options: [
         { label: "Admin", value: "admin" },
         { label: "User", value: "user" },
         { label: "Moderator", value: "moderator" }
       ],
-      onSearch: handleColumnSearch
+      onSearch: handleColumnSearch,
+      operator: "equal"
     }),
-    render: (role: string) => <Tag color={getRoleColor(role)}>{role.toUpperCase()}</Tag>,
+    render: (role: string) => <Tag color={getRoleColor(role)}>{role?.toUpperCase()}</Tag>,
     width: 150
   },
   {
@@ -84,12 +94,14 @@ export const createUserColumns = (
     dataIndex: "trang_thai",
     ...getColumnSelectProps<IUser>({
       dataIndex: "trang_thai",
-      placeholder: "Select status",
       options: [
-        { label: "Active", value: "active" },
-        { label: "Inactive", value: "inactive" }
+        { label: "Active", value: 1 },
+        { label: "Inactive", value: "0" }
       ],
-      onSearch: handleColumnSearch
+      onSearch: handleColumnSearch,
+      operator: "equal",
+      placeholder: "Tìm trạng thái",
+      showSearch: "top"
     }),
     render: (status: number) => (
       <Tag color={status === 1 ? "green" : "red"}>{status === 1 ? "ACTIVE" : "INACTIVE"}</Tag>
@@ -102,9 +114,10 @@ export const createUserColumns = (
     key: "ngay_tao",
     ...getColumnDateTimeProps<IUser>({
       dataIndex: "ngay_tao",
-      placeholder: "Ngày tạo",
-      mode: "single",
-      onSearch: handleColumnSearch
+      mode: "range",
+      onSearch: handleColumnSearch,
+      operator: "between",
+      showSearch: "top"
     }),
     align: "right",
     render: (joinDate) => dayjs(joinDate).format("DD/MM/YYYY HH:mm"),

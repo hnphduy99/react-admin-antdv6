@@ -11,14 +11,17 @@ interface DateTimeFilterProps {
 const { RangePicker } = DatePicker;
 
 export function DateTimeFilter({ selectedKeys, setSelectedKeys, placeholder, mode = "range" }: DateTimeFilterProps) {
-  // Convert value từ selectedKeys thành dayjs
   const parseValue = () => {
     if (!selectedKeys?.[0]) return mode === "single" ? null : [];
 
+    if (mode === "single") {
+      // Single mode: value is a plain YYYY-MM-DD string
+      return dayjs(selectedKeys[0]);
+    }
+
+    // Range mode: value is JSON stringified array
     try {
       const parsed = JSON.parse(selectedKeys[0]);
-
-      if (mode === "single") return dayjs(parsed);
 
       if (Array.isArray(parsed)) {
         return parsed.map((v) => (v ? dayjs(v) : null));
@@ -27,17 +30,17 @@ export function DateTimeFilter({ selectedKeys, setSelectedKeys, placeholder, mod
       // Do nothing
     }
 
-    return mode === "single" ? null : [];
+    return [];
   };
 
   const value = parseValue();
 
   const handleChangeSingle = (date: Dayjs | null) => {
-    setSelectedKeys([JSON.stringify(date ? date.toISOString() : "")]);
+    setSelectedKeys(date ? [date.format("YYYY-MM-DD")] : []);
   };
 
   const handleChangeRange = (dates: (Dayjs | null)[] | null) => {
-    setSelectedKeys([JSON.stringify(dates?.map((d) => (d ? d.toISOString() : "")) ?? [])]);
+    setSelectedKeys([JSON.stringify(dates?.map((d) => (d ? d.format("YYYY-MM-DD") : "")) ?? [])]);
   };
 
   return mode === "single" ? (

@@ -1,10 +1,11 @@
 import { userApi } from "@/apis/user.api";
 import CustomTable from "@/components/customize/CustomTable";
+import { TopSearchBar } from "@/components/filters/TopSearchBar";
 import { useCrudManagement } from "@/hooks/useCrudManagement";
-import { useDebounce } from "@/hooks/useDebounce";
 import type { IUser } from "@/interfaces/user.interface";
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Card, Input, Space } from "antd";
+import { getTopSearchConfigs } from "@/utils/tableSearchHelper";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Card } from "antd";
 import { useTranslation } from "react-i18next";
 import { UserFormModal } from "./UserFormModal";
 import { createUserColumns } from "./userColumns";
@@ -19,8 +20,8 @@ export const UserList = () => {
     editingItem,
     form,
     pagination,
-    handleSearch,
     handleColumnSearch,
+    handleBulkColumnSearch,
     handleAdd,
     handleEdit,
     handleDelete,
@@ -39,30 +40,20 @@ export const UserList = () => {
     entityName: "Users"
   });
 
-  const debouncedSearch = useDebounce(handleSearch, 500);
-
   const columns = createUserColumns(t, handleView, handleEdit, handleDelete, handleColumnSearch, pagination);
+  const topSearchConfigs = getTopSearchConfigs(columns);
 
   return (
     <>
       <Card className="shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-          <h2 className="text-xl font-semibold m-0">{t("user.userList")}</h2>
-          <Space>
-            <Input
-              placeholder={t("table.searchPlaceholder")}
-              prefix={<SearchOutlined />}
-              allowClear
-              onChange={(e) => {
-                debouncedSearch(e.target.value);
-              }}
-              className="w-64"
-            />
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-              {t("common.addNew")}
-            </Button>
-          </Space>
+          <h2 className="text-xl font-bold m-0 uppercase">{t("user.userList")}</h2>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+            {t("common.addNew")}
+          </Button>
         </div>
+
+        <TopSearchBar configs={topSearchConfigs} onSearch={handleBulkColumnSearch} />
 
         <CustomTable
           columns={columns}

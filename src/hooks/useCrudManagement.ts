@@ -2,15 +2,21 @@ import type { ApiResponse } from "@/apis/auth.api";
 import type { PaginatedResponse } from "@/apis/user.api";
 import { PER_PAGE } from "@/constants/constants";
 import { useNotification } from "@/providers/NotificationProvider";
+import type { ColumnSearchValue, SearchOperator } from "@/utils/tableSearchHelper";
 import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
+
+export interface ColumnSearchItem {
+  field: string;
+  value: string | number;
+  operator: SearchOperator;
+}
 
 interface CrudApiService<T> {
   getAll?: (
     page: number,
-    pageSize: number,
-    search?: string,
-    columnSearches?: Record<string, string>
+    limit: number,
+    columnSearches?: ColumnSearchItem[]
   ) => Promise<ApiResponse<PaginatedResponse<T>>>;
   getById?: (id: string | number) => Promise<ApiResponse<T>>;
   create: (data: T) => Promise<ApiResponse<T>>;
@@ -26,7 +32,7 @@ interface CrudConfig<T> {
 
 export interface PaginationConfig {
   current: number;
-  pageSize: number;
+  limit: number;
   total: number;
 }
 
@@ -42,20 +48,18 @@ export interface PaginationConfig {
  */
 export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T>) => {
   const [data, setData] = useState<T[]>([]);
-  const [searchText, setSearchText] = useState("");
-  const [columnSearches, setColumnSearches] = useState<Record<string, string>>({}); // Column-specific searches
+  const [columnSearches, setColumnSearches] = useState<ColumnSearchItem[]>([]); // Column-specific searches as array
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<T | null>(null);
   const [form] = Form.useForm();
   const [pagination, setPagination] = useState<PaginationConfig>({
     current: 1,
-    pageSize: PER_PAGE,
+    limit: PER_PAGE,
     total: 0
   });
   const notification = useNotification();
 
-  // Memoize config to prevent recreation on every render
   const { apiService, entityName, onView } = useMemo(
     () => ({
       apiService: config.apiService,
@@ -67,7 +71,7 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
 
   // Fetch data from API
   const fetchData = useCallback(
-    async (page = 1, pageSize = 10, search = "", colSearches: Record<string, string> = {}) => {
+    async (page = 1, limit = PER_PAGE, colSearches: ColumnSearchItem[] = []) => {
       if (!apiService.getAll) {
         console.warn("getAll method not provided in apiService");
         return;
@@ -75,13 +79,13 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
 
       try {
         setLoading(true);
-        const response = await apiService.getAll(page, pageSize, search, colSearches);
+        const response = await apiService.getAll(page, limit, colSearches);
 
         if (response.code === 200) {
           setData(response.data.collection);
           setPagination({
             current: response.data.current_page,
-            pageSize: PER_PAGE,
+            limit: PER_PAGE,
             total: response.data.total
           });
         }
@@ -95,46 +99,66 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
   );
 
   useEffect(() => {
-    fetchData(1, 10, "");
+    fetchData(1, PER_PAGE);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSearch = useCallback(
-    (value: string) => {
-      setSearchText(value);
-      fetchData(1, pagination.pageSize, value, columnSearches);
+  const applyColumnSearches = useCallback(
+    (searches: Record<string, ColumnSearchValue | null>) => {
+      let updatedSearches = [...columnSearches];
+
+      Object.entries(searches).forEach(([column, value]) => {
+        if (!value) {
+          updatedSearches = updatedSearches.filter((item) => item.field !== column);
+        } else {
+          const existingIndex = updatedSearches.findIndex((item) => item.field === column);
+
+          const newItem: ColumnSearchItem = {
+            field: column,
+            value: value.value,
+            operator: value.operator
+          };
+
+          if (existingIndex >= 0) {
+            updatedSearches[existingIndex] = newItem;
+          } else {
+            updatedSearches.push(newItem);
+          }
+        }
+      });
+
+      setColumnSearches(updatedSearches);
+      fetchData(1, pagination.limit, updatedSearches);
     },
-    [fetchData, pagination.pageSize, columnSearches]
+    [columnSearches, fetchData, pagination.limit]
   );
 
   const handleColumnSearch = useCallback(
-    (value: string, column: string) => {
-      const updatedSearches = { ...columnSearches };
-      if (!value) {
-        delete updatedSearches[column];
-      } else {
-        updatedSearches[column] = value;
-      }
-      setColumnSearches(updatedSearches);
-      // Pass column filters to API
-      fetchData(1, pagination.pageSize, searchText, updatedSearches);
+    (value: ColumnSearchValue | null, column: string) => {
+      applyColumnSearches({ [column]: value });
     },
-    [fetchData, pagination.pageSize, searchText, columnSearches]
+    [applyColumnSearches]
   );
 
-  // Handle table pagination change
-  const handleTableChange = (newPagination: any) => {
-    fetchData(newPagination.current, newPagination.pageSize, searchText, columnSearches);
+  const handleBulkColumnSearch = useCallback(
+    (searches: Record<string, ColumnSearchValue | null>) => {
+      applyColumnSearches(searches);
+    },
+    [applyColumnSearches]
+  );
+
+  const handleTableChange = (newPagination: any, _filters: any, _sorter: any, extra: any) => {
+    if (extra?.action === "paginate") {
+      fetchData(newPagination.current, newPagination.pageSize, columnSearches);
+    }
   };
 
-  // Open create modal
   const handleAdd = () => {
     setEditingItem(null);
     form.resetFields();
     setIsModalOpen(true);
   };
 
-  // Open edit modal
   const handleEdit = async (id: string | number) => {
     try {
       setLoading(true);
@@ -167,7 +191,7 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
           title: "Success",
           description: response.message || `${entityName} deleted successfully`
         });
-        await fetchData(pagination.current, pagination.pageSize, searchText, columnSearches);
+        await fetchData(pagination.current, pagination.limit, columnSearches);
       }
     } catch (error: any) {
       notification.error({ title: "Error", description: error.message || `Failed to delete ${entityName}` });
@@ -204,7 +228,7 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
 
       setIsModalOpen(false);
       form.resetFields();
-      await fetchData(pagination.current, pagination.pageSize, searchText, columnSearches);
+      await fetchData(pagination.current, pagination.limit, columnSearches);
     } catch (error: any) {
       if (error.errorFields) {
         // Form validation errors
@@ -234,7 +258,6 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
   return {
     // State
     data,
-    searchText,
     loading,
     isModalOpen,
     editingItem,
@@ -242,9 +265,8 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
     pagination,
 
     // Actions
-    setSearchText,
-    handleSearch,
     handleColumnSearch,
+    handleBulkColumnSearch,
     handleAdd,
     handleEdit,
     handleDelete,
@@ -254,6 +276,6 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
     handleModalCancel,
 
     // Utilities
-    refresh: () => fetchData(pagination.current, pagination.pageSize, searchText, columnSearches)
+    refresh: () => fetchData(pagination.current, pagination.limit, columnSearches)
   };
 };
