@@ -1,5 +1,4 @@
 import { userApi } from "@/apis/user.api";
-import CustomTable from "@/components/customize/CustomTable";
 import { TopSearchBar } from "@/components/filters/TopSearchBar";
 import { useCrudManagement } from "@/hooks/useCrudManagement";
 import type { IUser } from "@/interfaces/user.interface";
@@ -9,6 +8,7 @@ import { Button, Card } from "antd";
 import { useTranslation } from "react-i18next";
 import { UserFormModal } from "./UserFormModal";
 import { createUserColumns } from "./userColumns";
+import { TableWithPagination } from "@/components/common";
 
 export const UserList = () => {
   const { t } = useTranslation();
@@ -55,7 +55,7 @@ export const UserList = () => {
 
         <TopSearchBar configs={topSearchConfigs} onSearch={handleBulkColumnSearch} />
 
-        <CustomTable
+        <TableWithPagination
           columns={columns}
           dataSource={data}
           loading={loading}

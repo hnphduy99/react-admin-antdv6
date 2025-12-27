@@ -20,7 +20,7 @@ const MainSider = () => {
         trigger={null}
         collapsed={collapsed}
         collapsedWidth={isMobile ? 0 : 80}
-        className="fixed! overflow-visible z-5 min-h-screen max-h-screen text-secondary-500 md:right-[unset] md:left-0 xl:relative!"
+        className="fixed! overflow-visible z-6 min-h-screen max-h-screen text-secondary-500 md:right-[unset] md:left-0 xl:relative!"
         width={260}
       >
         <SiderLogo />
@@ -39,7 +39,7 @@ const MainSider = () => {
         )}
       </Layout.Sider>
       {isMobile && !collapsed && (
-        <div onClick={toggleSider} className="absolute top-0 left-0 w-full h-full z-1 backdrop-blur-xs "></div>
+        <div onClick={toggleSider} className="absolute top-0 left-0 w-full h-full z-5 backdrop-blur-xs "></div>
       )}
     </>
   );

@@ -1,11 +1,11 @@
-import { message } from "antd";
-import { store } from "@/store";
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import axios from "axios";
+import { getToken, signOut } from "./redux";
+import { API_BASE_URL } from "@/constants/constants";
 
 // Create axios instance
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "https://api.example.com/v1",
+  baseURL: API_BASE_URL,
   timeout: 15000,
   headers: {
     "Content-Type": "application/json"
@@ -15,14 +15,11 @@ const axiosInstance: AxiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Get token from Redux store
-    const state = store.getState();
-    const token = state.auth.user?.token;
+    const token = getToken();
     const deviceId = 1;
 
     config.headers.device_id = deviceId;
 
-    // Add token to headers if it exists
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,11 +30,9 @@ axiosInstance.interceptors.request.use(
       _t: Date.now()
     };
 
-    console.log("API Request:", config.method?.toUpperCase(), config.url);
     return config;
   },
   (error: AxiosError) => {
-    console.error("❌ Request Error:", error);
     return Promise.reject(error);
   }
 );
@@ -45,71 +40,61 @@ axiosInstance.interceptors.request.use(
 // Response interceptor
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log("✅ API Response:", response.config.url, response.status);
-
-    // You can transform response data here if needed
+    const { code, message } = response.data;
+    if (code === 403) {
+      signOut();
+      throw new Error(message);
+    }
     return response;
   },
   async (error: AxiosError<any>) => {
-    // Handle different error statuses
     if (error.response) {
       const { status, data } = error.response;
       let validationErrors: any = null;
       switch (status) {
         case 401:
-          // Unauthorized - token expired or invalid
-          message.error("Session expired. Please login again.");
-
-          // Clear auth state and redirect to login
           window.location.href = "/login";
-          break;
+          // Unauthorized - token expired or invalid
+          throw new Error("Session expired. Please login again.");
 
         case 403:
           // Forbidden - no permission
-          message.error("You do not have permission to access this resource.");
-          break;
+          throw new Error("You do not have permission to access this resource.");
 
         case 404:
           // Not found
-          message.error(data?.message || "Resource not found.");
-          break;
+          throw new Error(data?.message || "Resource not found.");
 
         case 422:
           // Validation error
           validationErrors = data?.errors;
           if (validationErrors) {
             Object.keys(validationErrors).forEach((key) => {
-              message.error(validationErrors[key][0]);
+              throw new Error(validationErrors[key][0]);
             });
           } else {
-            message.error(data?.message || "Validation error.");
+            throw new Error(data?.message || "Validation error.");
           }
           break;
 
         case 429:
           // Too many requests
-          message.error("Too many requests. Please try again later.");
-          break;
+          throw new Error("Too many requests. Please try again later.");
 
         case 500:
         case 502:
         case 503:
         case 504:
           // Server errors
-          message.error(data?.message || "Server error. Please try again later.");
-          break;
+          throw new Error(data?.message || "Server error. Please try again later.");
 
         default:
-          message.error(data?.message || "An error occurred. Please try again.");
+          throw new Error(data?.message || "An error occurred. Please try again.");
       }
     } else if (error.request) {
-      // Request made but no response received
-      message.error("Network error. Please check your connection.");
-      console.error("❌ Network Error:", error.request);
+      throw new Error(error.request || "Network error. Please check your connection.");
     } else {
-      // Something else happened
-      message.error("An unexpected error occurred.");
-      console.error("❌ Error:", error.message);
+      throw new Error(error.message || "An unexpected error occurred.");
     }
 
     return Promise.reject(error);

@@ -13,12 +13,12 @@ export interface ColumnSearchItem {
 }
 
 interface CrudApiService<T> {
-  getAll?: (
+  getAll: (
     page: number,
     limit: number,
     columnSearches?: ColumnSearchItem[]
   ) => Promise<ApiResponse<PaginatedResponse<T>>>;
-  getById?: (id: string | number) => Promise<ApiResponse<T>>;
+  getById: (id: string | number) => Promise<ApiResponse<T>>;
   create: (data: T) => Promise<ApiResponse<T>>;
   update: (id: string | number, data: T) => Promise<ApiResponse<T>>;
   delete: (id: string | number) => Promise<ApiResponse<T>>;
@@ -48,7 +48,7 @@ export interface PaginationConfig {
  */
 export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T>) => {
   const [data, setData] = useState<T[]>([]);
-  const [columnSearches, setColumnSearches] = useState<ColumnSearchItem[]>([]); // Column-specific searches as array
+  const [columnSearches, setColumnSearches] = useState<ColumnSearchItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<T | null>(null);
@@ -72,11 +72,6 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
   // Fetch data from API
   const fetchData = useCallback(
     async (page = 1, limit = PER_PAGE, colSearches: ColumnSearchItem[] = []) => {
-      if (!apiService.getAll) {
-        console.warn("getAll method not provided in apiService");
-        return;
-      }
-
       try {
         setLoading(true);
         const response = await apiService.getAll(page, limit, colSearches);
@@ -162,10 +157,6 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
   const handleEdit = async (id: string | number) => {
     try {
       setLoading(true);
-      if (!apiService.getById) {
-        console.warn("getById method not provided in apiService");
-        return;
-      }
       const response = await apiService.getById(id);
 
       if (response.code === 200) {
@@ -206,35 +197,33 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
       const values = await form.validateFields();
       setLoading(true);
 
-      if (editingItem) {
-        // Update existing item
-        const response = await apiService.update(editingItem.id, values);
-        if (response.code === 200) {
-          notification.success({
-            title: "Success",
-            description: response.message || `${entityName} updated successfully`
-          });
-        }
-      } else {
-        // Create new item
-        const response = await apiService.create(values);
-        if (response.code === 200) {
-          notification.success({
-            title: "Success",
-            description: response.message || `${entityName} created successfully`
-          });
-        }
-      }
+      const response = editingItem ? await apiService.update(editingItem.id, values) : await apiService.create(values);
+
+      const isSuccess = response?.code === 200;
+
+      notification[isSuccess ? "success" : "error"]({
+        title: isSuccess ? "Success" : "Error",
+        description:
+          response?.message ||
+          (isSuccess
+            ? `${entityName} ${editingItem ? "updated" : "created"} successfully`
+            : editingItem
+              ? `Failed to update ${entityName}`
+              : Array.isArray(response?.data)
+                ? response.data.join(", ")
+                : `Failed to create ${entityName}`)
+      });
+
+      if (!isSuccess) return;
 
       setIsModalOpen(false);
       form.resetFields();
       await fetchData(pagination.current, pagination.limit, columnSearches);
     } catch (error: any) {
-      if (error.errorFields) {
-        // Form validation errors
-        return;
-      }
-      notification.error({ title: "Error", description: error.message || "Operation failed" });
+      notification.error({
+        title: "Error",
+        description: error?.message || "Operation failed"
+      });
     } finally {
       setLoading(false);
     }
