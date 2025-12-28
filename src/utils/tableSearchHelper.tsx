@@ -86,8 +86,21 @@ function createFilterDropdown(
   handlers: ReturnType<typeof createHandlers>
 ) {
   return ({ setSelectedKeys, selectedKeys, confirm, close }: any) => {
-    const value = Array.isArray(selectedKeys) ? selectedKeys[0] : selectedKeys;
-    const stringValue = typeof value === "string" ? value : JSON.stringify(value ?? "");
+    const data = Array.isArray(selectedKeys) ? selectedKeys[0] : selectedKeys;
+
+    const handleSearch = () => {
+      let value = data;
+      let operator = extraProps.operator;
+
+      // Nếu dữ liệu là object (như trong Advanced Filter), tách value và operator/condition
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        value = data.value;
+        operator = data.operator || data.condition || operator;
+      }
+
+      const stringValue = typeof value === "string" ? value : JSON.stringify(value ?? "");
+      handlers.onSearch(confirm, stringValue, operator);
+    };
 
     return (
       <Card
@@ -101,7 +114,7 @@ function createFilterDropdown(
         <Flex vertical gap={8}>
           <FilterComponent selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} {...extraProps} />
           <ActionFilter
-            handleSearch={() => handlers.onSearch(confirm, stringValue)}
+            handleSearch={handleSearch}
             handleReset={() => handlers.onReset(confirm, setSelectedKeys)}
             close={close}
           />
@@ -286,13 +299,26 @@ export function getTopSearchConfigs(columns: any[]): TopSearchConfig[] {
 
 export function getColumnDateTimeAdvancedProps<T extends Record<string, any>>(
   params: GetColumnDateTimePropsParams<T>
-): ColumnType<T> {
-  const { dataIndex, placeholder, mode = "range", onSearch } = params;
+): ColumnType<T> & { searchConfig?: TopSearchConfig } {
+  const { dataIndex, placeholder, mode = "range", onSearch, operator = "between", showSearch = "column" } = params;
   const key = String(dataIndex);
-  const handlers = createHandlers(key, onSearch, "between");
+  const handlers = createHandlers(key, onSearch, operator);
+
+  const isColumn = showSearch === "column" || showSearch === "both";
+  const isTop = showSearch === "top" || showSearch === "both";
 
   return {
-    filterDropdown: createFilterDropdown(DateTimeFilterAdvanced, { placeholder, mode }, handlers),
-    filterIcon: () => <SearchOutlined />
+    ...(isColumn && {
+      filterDropdown: createFilterDropdown(DateTimeFilterAdvanced, { placeholder, mode, operator }, handlers),
+      filterIcon: () => <SearchOutlined />
+    }),
+    ...(isTop && {
+      searchConfig: {
+        dataIndex: key,
+        type: mode === "single" ? "date" : "dateRange",
+        placeholder,
+        operator
+      }
+    })
   };
 }

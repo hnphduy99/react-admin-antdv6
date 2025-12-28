@@ -1,5 +1,5 @@
 import { DatePicker, Flex, Select } from "antd";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 interface DateTimeFilterAdvancedProps {
   selectedKeys: any[];
   setSelectedKeys: (keys: any[]) => void;
@@ -17,24 +17,51 @@ const dateConditions = [
 export function DateTimeFilterAdvanced({ selectedKeys, setSelectedKeys, placeholder }: DateTimeFilterAdvancedProps) {
   const parseValue = () => {
     const data = selectedKeys?.[0];
+    const condition = data?.condition ?? "between";
+    const v = data?.value;
+    let v1 = null;
+    let v2 = null;
+
+    if (v && typeof v === "string") {
+      // Tự động nhận diện định dạng: Nếu bắt đầu bằng "[" thì là mảng JSON
+      if (v.startsWith("[")) {
+        try {
+          const parsed = JSON.parse(v);
+          if (Array.isArray(parsed)) {
+            v1 = parsed[0] ? dayjs(parsed[0], "YYYY-MM-DD HH:mm:ss") : null;
+            v2 = parsed[1] ? dayjs(parsed[1], "YYYY-MM-DD HH:mm:ss") : null;
+          }
+        } catch {
+          // Fallback nếu JSON lỗi
+          v1 = dayjs(v, "YYYY-MM-DD");
+        }
+      } else {
+        // Ngược lại là chuỗi ngày đơn
+        v1 = dayjs(v, "YYYY-MM-DD");
+      }
+    }
+
     return {
-      condition: data?.condition ?? "between",
-      value: data?.value ? dayjs(data.value) : null,
-      value2: data?.value2 ? dayjs(data.value2) : null
+      condition,
+      value: v1,
+      value2: v2
     };
   };
 
   const { condition, value, value2 } = parseValue();
 
-  // Convert date → YYYY-MM-DD
-  const formatDate = (d: Dayjs | null) => (d ? d.format("YYYY-MM-DD") : null);
-
   const updateKeys = (newData: any) => {
+    const nextCondition = newData.condition ?? condition;
+    const v1 = newData.value ?? value;
+    const v2 = newData.value2 ?? value2;
+
     setSelectedKeys([
       {
-        condition: newData.condition ?? condition,
-        value: formatDate(newData.value ?? value),
-        value2: formatDate(newData.value2 ?? value2)
+        condition: nextCondition,
+        value:
+          nextCondition === "between"
+            ? JSON.stringify([v1?.format("YYYY-MM-DD 00:00:00") ?? "", v2?.format("YYYY-MM-DD 23:59:59") ?? ""])
+            : v1?.format("YYYY-MM-DD")
       }
     ]);
   };
@@ -52,6 +79,7 @@ export function DateTimeFilterAdvanced({ selectedKeys, setSelectedKeys, placehol
         <DatePicker.RangePicker
           value={[value, value2]}
           placeholder={["Từ ngày", "Đến ngày"]}
+          format="DD/MM/YYYY"
           onChange={(dates) =>
             updateKeys({
               value: dates?.[0] ?? null,
@@ -62,6 +90,7 @@ export function DateTimeFilterAdvanced({ selectedKeys, setSelectedKeys, placehol
       ) : (
         <DatePicker
           value={value}
+          format="DD/MM/YYYY"
           onChange={(v) => updateKeys({ value: v })}
           placeholder={placeholder}
           className="w-full"

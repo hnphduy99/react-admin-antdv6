@@ -1,7 +1,7 @@
 import type { PaginationConfig } from "@/hooks/useCrudManagement";
 import type { IUser } from "@/interfaces/user.interface";
 import {
-  getColumnDateTimeProps,
+  getColumnDateTimeAdvancedProps,
   getColumnInputSearchProps,
   getColumnSelectProps,
   type ColumnSearchValue
@@ -112,7 +112,7 @@ export const createUserColumns = (
     title: t("user.createdAt"),
     dataIndex: "ngay_tao",
     key: "ngay_tao",
-    ...getColumnDateTimeProps<IUser>({
+    ...getColumnDateTimeAdvancedProps<IUser>({
       dataIndex: "users.ngay_tao",
       mode: "range",
       onSearch: handleColumnSearch,
