@@ -38,7 +38,7 @@ export const createUserColumns = (
     width: 50
   },
   {
-    title: t("table.name"),
+    title: t("user.fullname"),
     dataIndex: "ho_va_ten",
     key: "ho_va_ten",
     ...getColumnInputSearchProps<IUser>({
@@ -59,7 +59,7 @@ export const createUserColumns = (
     )
   },
   {
-    title: t("table.username"),
+    title: t("user.username"),
     dataIndex: "tai_khoan",
     key: "tai_khoan",
     ...getColumnInputSearchProps<IUser>({
@@ -109,18 +109,18 @@ export const createUserColumns = (
     width: 150
   },
   {
-    title: t("user.joinDate"),
+    title: t("user.createdAt"),
     dataIndex: "ngay_tao",
     key: "ngay_tao",
     ...getColumnDateTimeProps<IUser>({
-      dataIndex: "ngay_tao",
+      dataIndex: "users.ngay_tao",
       mode: "range",
       onSearch: handleColumnSearch,
       operator: "between",
-      showSearch: "top"
+      showSearch: "both"
     }),
     align: "right",
-    render: (joinDate) => dayjs(joinDate).format("DD/MM/YYYY HH:mm"),
+    render: (createdAt) => dayjs(createdAt).format("DD/MM/YYYY HH:mm"),
     width: 150
   },
   {

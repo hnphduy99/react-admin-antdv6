@@ -25,10 +25,10 @@ axiosInstance.interceptors.request.use(
     }
 
     // Add timestamp to prevent caching
-    config.params = {
-      ...config.params,
-      _t: Date.now()
-    };
+    // config.params = {
+    //   ...config.params,
+    //   _t: Date.now()
+    // };
 
     return config;
   },

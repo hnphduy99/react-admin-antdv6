@@ -75,13 +75,22 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
       try {
         setLoading(true);
         const response = await apiService.getAll(page, limit, colSearches);
+        const isSuccess = response?.code === 200;
 
-        if (response.code === 200) {
+        if (isSuccess) {
           setData(response.data.collection);
           setPagination({
             current: response.data.current_page,
             limit: PER_PAGE,
             total: response.data.total
+          });
+        } else {
+          notification.error({ title: "Error", description: response.message || `Failed to load ${entityName}s` });
+          setData([]);
+          setPagination({
+            current: 1,
+            limit: PER_PAGE,
+            total: 0
           });
         }
       } catch (error: any) {
@@ -128,19 +137,13 @@ export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T
     [columnSearches, fetchData, pagination.limit]
   );
 
-  const handleColumnSearch = useCallback(
-    (value: ColumnSearchValue | null, column: string) => {
-      applyColumnSearches({ [column]: value });
-    },
-    [applyColumnSearches]
-  );
+  const handleColumnSearch = (value: ColumnSearchValue | null, column: string) => {
+    applyColumnSearches({ [column]: value });
+  };
 
-  const handleBulkColumnSearch = useCallback(
-    (searches: Record<string, ColumnSearchValue | null>) => {
-      applyColumnSearches(searches);
-    },
-    [applyColumnSearches]
-  );
+  const handleBulkColumnSearch = (searches: Record<string, ColumnSearchValue | null>) => {
+    applyColumnSearches(searches);
+  };
 
   const handleTableChange = (newPagination: any, _filters: any, _sorter: any, extra: any) => {
     if (extra?.action === "paginate") {

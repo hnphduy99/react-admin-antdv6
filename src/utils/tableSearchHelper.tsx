@@ -254,7 +254,7 @@ interface GetColumnDateTimePropsParams<T> extends GetCommonFilterParams<T> {
 export function getColumnDateTimeProps<T extends Record<string, any>>(
   params: GetColumnDateTimePropsParams<T>
 ): ColumnType<T> & { searchConfig?: TopSearchConfig } {
-  const { dataIndex, placeholder, mode = "range", onSearch, operator = "equal", showSearch = "column" } = params;
+  const { dataIndex, placeholder, mode = "range", onSearch, operator = "between", showSearch = "column" } = params;
   const key = String(dataIndex);
   const handlers = createHandlers(key, onSearch, operator);
 
