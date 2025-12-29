@@ -18,7 +18,8 @@ export default {
     no: "No",
     addNew: "Add New",
     selectAll: "Select All",
-    total: "Total {{count}} items"
+    total: "Total {{count}} items",
+    exportExcel: "Export Excel"
   },
   auth: {
     signIn: "Sign In",

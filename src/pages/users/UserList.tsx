@@ -1,15 +1,15 @@
 import { userApi } from "@/apis/user.api";
+import { ExportExcel, TableWithPagination } from "@/components/common";
 import { TopSearchBar } from "@/components/filters/TopSearchBar";
+import PageTitle from "@/components/PageTitle/PageTitle";
 import { useCrudManagement } from "@/hooks/useCrudManagement";
 import type { IUser } from "@/interfaces/user.interface";
 import { getTopSearchConfigs } from "@/utils/tableSearchHelper";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Card } from "antd";
+import { Button, Card, Space } from "antd";
 import { useTranslation } from "react-i18next";
-import { UserFormModal } from "./UserFormModal";
 import { createUserColumns } from "./userColumns";
-import { TableWithPagination } from "@/components/common";
-import PageTitle from "@/components/PageTitle/PageTitle";
+import { UserFormModal } from "./UserFormModal";
 
 export const UserList = () => {
   const { t } = useTranslation();
@@ -51,9 +51,12 @@ export const UserList = () => {
       <Card className="shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
           <h2 className="text-xl font-bold m-0 uppercase">{t("user.userList")}</h2>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            {t("common.addNew")}
-          </Button>
+          <Space>
+            <ExportExcel columns={columns} dataSource={data} fileName="Danh_sach_nguoi_dung" t={t} />
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+              {t("common.addNew")}
+            </Button>
+          </Space>
         </div>
 
         <TopSearchBar configs={topSearchConfigs} onSearch={handleBulkColumnSearch} />

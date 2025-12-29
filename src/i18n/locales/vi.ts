@@ -21,7 +21,8 @@ export default {
     addNew: "Thêm mới",
     select: "Chọn",
     selectAll: "Chọn tất cả",
-    total: "Tổng cộng {{count}} mục"
+    total: "Tổng cộng {{count}} mục",
+    exportExcel: "Xuất Excel"
   },
   auth: {
     signIn: "Đăng nhập",

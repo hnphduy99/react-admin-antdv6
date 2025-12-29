@@ -12,6 +12,7 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, UserOutlined } from "@ant-de
 import { Avatar, Button, Popconfirm, Space, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
+import type { TFunction } from "i18next";
 
 export const getRoleColor = (role: string) => {
   switch (role) {
@@ -25,7 +26,7 @@ export const getRoleColor = (role: string) => {
 };
 
 export const createUserColumns = (
-  t: any,
+  t: TFunction<"translation", undefined>,
   handleView: (record: IUser) => void,
   handleEdit: (id: string | number) => void,
   handleDelete: (id: string | number) => void,
