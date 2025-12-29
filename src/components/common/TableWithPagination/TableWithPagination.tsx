@@ -20,6 +20,7 @@ export default function TableWithPagination<T>(props: TableWithPaginationProps<T
         pagination
           ? {
               ...pagination,
+              pageSize: pagination.limit,
               placement: ["bottomCenter"],
               showSizeChanger: true,
               showTotal: (total) => t("common.total", { count: total })
