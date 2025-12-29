@@ -85,11 +85,7 @@ export const Register = () => {
             { min: 6, message: t("validation.passwordMin") }
           ]}
         >
-          <Input.Password
-            prefix={<LockOutlined />}
-            placeholder={t("auth.createPasswordPlaceholder")}
-            size="large"
-          />
+          <Input.Password prefix={<LockOutlined />} placeholder={t("auth.createPasswordPlaceholder")} size="large" />
         </Form.Item>
 
         <Form.Item
@@ -108,11 +104,7 @@ export const Register = () => {
             })
           ]}
         >
-          <Input.Password
-            prefix={<LockOutlined />}
-            placeholder={t("auth.confirmPasswordPlaceholder")}
-            size="large"
-          />
+          <Input.Password prefix={<LockOutlined />} placeholder={t("auth.confirmPasswordPlaceholder")} size="large" />
         </Form.Item>
 
         <Form.Item

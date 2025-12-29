@@ -1,8 +1,9 @@
 import type { ApiResponse } from "@/apis/auth.api";
 import type { PaginatedResponse } from "@/apis/user.api";
 import { PER_PAGE } from "@/constants/constants";
+import type { ColumnSearchValue } from "@/interfaces/searchTable.interface";
 import { useNotification } from "@/providers/NotificationProvider";
-import type { ColumnSearchValue, SearchOperator } from "@/utils/tableSearchHelper";
+import type { SearchOperator } from "@/types/searchOperator";
 import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 

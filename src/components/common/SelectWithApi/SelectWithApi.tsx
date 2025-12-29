@@ -49,9 +49,7 @@ export default function SelectWithApi({
       options={options}
       notFoundContent={loading ? <Spin size="small" /> : null}
       onOpenChange={(open) => {
-        if (open) {
-          fetchData();
-        }
+        if (open) fetchData();
       }}
     />
   );

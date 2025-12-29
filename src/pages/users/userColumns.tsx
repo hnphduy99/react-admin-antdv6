@@ -1,10 +1,12 @@
+import { optionsApi } from "@/apis/options.api";
 import type { PaginationConfig } from "@/hooks/useCrudManagement";
+import type { ColumnSearchValue } from "@/interfaces/searchTable.interface";
 import type { IUser } from "@/interfaces/user.interface";
 import {
+  getColumnAsyncSelectProps,
   getColumnDateTimeAdvancedProps,
   getColumnInputSearchProps,
-  getColumnSelectProps,
-  type ColumnSearchValue
+  getColumnSelectProps
 } from "@/utils/tableSearchHelper";
 import { DeleteOutlined, EditOutlined, EyeOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Tag } from "antd";
@@ -74,16 +76,13 @@ export const createUserColumns = (
     title: t("user.role"),
     dataIndex: "ma_vai_tro",
     key: "ma_vai_tro",
-    ...getColumnSelectProps<IUser>({
+    ...getColumnAsyncSelectProps<IUser>({
       dataIndex: "ma_vai_tro",
-      placeholder: "Select role",
-      options: [
-        { label: "Admin", value: "admin" },
-        { label: "User", value: "user" },
-        { label: "Moderator", value: "moderator" }
-      ],
+      placeholder: "Tìm vai trò",
+      fetchData: optionsApi.getRoles,
       onSearch: handleColumnSearch,
-      operator: "equal"
+      operator: "equal",
+      showSearch: "both"
     }),
     render: (role: string) => <Tag color={getRoleColor(role)}>{role?.toUpperCase()}</Tag>,
     width: 150
@@ -95,8 +94,8 @@ export const createUserColumns = (
     ...getColumnSelectProps<IUser>({
       dataIndex: "trang_thai",
       options: [
-        { label: "Active", value: 1 },
-        { label: "Inactive", value: "0" }
+        { label: "Hoạt động", value: 1 },
+        { label: "Không hoạt động", value: "0" }
       ],
       onSearch: handleColumnSearch,
       operator: "equal",
@@ -104,7 +103,7 @@ export const createUserColumns = (
       showSearch: "top"
     }),
     render: (status: number) => (
-      <Tag color={status === 1 ? "green" : "red"}>{status === 1 ? "ACTIVE" : "INACTIVE"}</Tag>
+      <Tag color={status === 1 ? "green" : "red"}>{status === 1 ? "HOẠT ĐỘNG" : "KHÔNG HOẠT ĐỘNG"}</Tag>
     ),
     width: 150
   },

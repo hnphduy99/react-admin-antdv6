@@ -2,7 +2,7 @@ import { store } from "@/store";
 import { logout } from "@/store/slices/authSlice";
 
 export const signOut = async () => {
-  store.dispatch(logout());
+  return store.dispatch(logout());
 };
 
 export const getToken = () => {

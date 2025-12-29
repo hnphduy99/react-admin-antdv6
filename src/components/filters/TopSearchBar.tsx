@@ -1,27 +1,21 @@
-import type { ColumnSearchValue, SearchOperator } from "@/utils/tableSearchHelper";
+import type { ColumnSearchValue, TopSearchConfig } from "@/interfaces/searchTable.interface";
 import { formatter, parser } from "@/utils/utils";
 import { ReloadOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Input, InputNumber, Select, Space } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 
-export interface TopSearchConfig {
-  dataIndex: string;
-  type: "input" | "number" | "select" | "date" | "dateRange";
-  placeholder?: string;
-  options?: Array<{ label: string; value: string | number }>;
-  operator?: SearchOperator;
-}
+type SearchValues = Record<string, any>;
 
 interface TopSearchBarProps {
   configs: TopSearchConfig[];
   onSearch: (searches: Record<string, ColumnSearchValue | null>) => void;
 }
 
-type SearchValues = Record<string, unknown>;
-
 export function TopSearchBar({ configs, onSearch }: TopSearchBarProps) {
   const [values, setValues] = useState<SearchValues>({});
+  const [options, setOptions] = useState<Array<{ label: string; value: string | number }>>([]);
+  const [loading, setLoading] = useState(false);
 
   const setValue = (key: string, value: unknown) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -34,7 +28,7 @@ export function TopSearchBar({ configs, onSearch }: TopSearchBarProps) {
     const searches = configs.reduce<Record<string, ColumnSearchValue | null>>(
       (acc, { dataIndex, operator = "contain" }) => {
         const value = values[dataIndex];
-        acc[dataIndex] = isEmptyValue(value) ? null : { value, operator };
+        acc[dataIndex] = isEmptyValue(value) ? null : { value: value as string | number, operator };
         return acc;
       },
       {}
@@ -51,6 +45,19 @@ export function TopSearchBar({ configs, onSearch }: TopSearchBarProps) {
         return acc;
       }, {})
     );
+  };
+
+  const loadOptions = async (fetchOptions?: (keyword: string) => Promise<Array<{ label: string; value: any }>>) => {
+    if (!fetchOptions) return;
+    setLoading(true);
+    try {
+      const data = await fetchOptions("");
+      setOptions(data);
+    } catch (error) {
+      console.error("Failed to load options:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderInput = (config: TopSearchConfig) => (
@@ -84,6 +91,22 @@ export function TopSearchBar({ configs, onSearch }: TopSearchBarProps) {
       placeholder={config.placeholder ?? "Chọn"}
       allowClear
       options={config.options}
+      value={values[config.dataIndex]}
+      onChange={(val) => setValue(config.dataIndex, val)}
+      className="w-48"
+    />
+  );
+
+  const renderAsyncSelect = (config: TopSearchConfig) => (
+    <Select
+      key={config.dataIndex}
+      placeholder={config.placeholder ?? "Chọn"}
+      allowClear
+      options={options}
+      loading={loading}
+      onOpenChange={(open) => {
+        if (open) loadOptions(config.fetchData);
+      }}
       value={values[config.dataIndex]}
       onChange={(val) => setValue(config.dataIndex, val)}
       className="w-48"
@@ -136,6 +159,8 @@ export function TopSearchBar({ configs, onSearch }: TopSearchBarProps) {
         return renderNumberInput(config);
       case "select":
         return renderSelect(config);
+      case "asyncSelect":
+        return renderAsyncSelect(config);
       case "date":
         return renderDate(config);
       case "dateRange":
