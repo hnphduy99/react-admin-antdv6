@@ -9,16 +9,13 @@ import { SiderMenuStyles } from "./SiderMenu.styles";
 const SiderMenu = () => {
   const { t } = useTranslation();
   const theme = useAppSelector((state) => state.theme.mode);
-  const user = useAppSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const { phan_quyen } = user || {};
 
   const isAccessible = (item: MenuItemData): boolean => {
     // Nếu không có phan_quyen hoặc key không tồn tại trong phan_quyen,
     // ta mặc định cho phép hiện menu đó.
-    return hasActionPermission(phan_quyen, item.permissionKey || item.key, "showMenu", false);
+    return hasActionPermission(item.permissionKey || item.key, "showMenu", true);
   };
 
   const filteredMenuItems = sidebarNavigation

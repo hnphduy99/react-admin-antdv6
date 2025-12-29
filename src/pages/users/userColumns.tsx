@@ -31,7 +31,12 @@ export const createUserColumns = (
   handleEdit: (id: string | number) => void,
   handleDelete: (id: string | number) => void,
   handleColumnSearch: (value: ColumnSearchValue | null, column: string) => void,
-  pagination: PaginationConfig
+  pagination: PaginationConfig,
+  permissions?: {
+    canUpdate?: boolean;
+    canDelete?: boolean;
+    canView?: boolean;
+  }
 ): ColumnsType<IUser> => [
   {
     title: t("table.stt"),
@@ -128,16 +133,18 @@ export const createUserColumns = (
     key: "action",
     render: (_, record) => (
       <Space size={0}>
-        <Button type="link" icon={<EyeOutlined />} onClick={() => handleView(record)} />
-        <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record.id)} />
-        <Popconfirm
-          title={t("table.deleteConfirm")}
-          onConfirm={() => handleDelete(record.id)}
-          okText={t("common.yes")}
-          cancelText={t("common.no")}
-        >
-          <Button type="link" danger icon={<DeleteOutlined />} />
-        </Popconfirm>
+        {permissions?.canView && <Button type="link" icon={<EyeOutlined />} onClick={() => handleView(record)} />}
+        {permissions?.canUpdate && <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record.id)} />}
+        {permissions?.canDelete && (
+          <Popconfirm
+            title={t("table.deleteConfirm")}
+            onConfirm={() => handleDelete(record.id)}
+            okText={t("common.yes")}
+            cancelText={t("common.no")}
+          >
+            <Button type="link" danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+        )}
       </Space>
     ),
     width: 120,

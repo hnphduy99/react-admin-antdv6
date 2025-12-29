@@ -8,3 +8,7 @@ export const signOut = async () => {
 export const getToken = () => {
   return store.getState().auth.user?.token;
 };
+
+export const getUserPermissions = () => {
+  return store.getState().auth.user?.phan_quyen || "";
+};
