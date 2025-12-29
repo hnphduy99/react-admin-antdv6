@@ -19,15 +19,10 @@ const NotificationContext = createContext<NotificationContextType>({
 
 //TODO: config notification
 const createNotificationConfig = (config: NotificationArgsProps, type: NotificationType): NotificationArgsProps => {
-  const hasDescription = Boolean(config.description);
-
   return {
     ...config,
     type,
-    title: <div className={`title ${!hasDescription ? "title-only" : ""}`}>{config.title}</div>,
-    description: hasDescription ? <div className="description">{config.description}</div> : undefined,
-    classNames: hasDescription ? config.classNames : `notification-without-description ${config.classNames || ""}`,
-    showProgress: true
+    title: <div className="title">{config.title}</div>
   };
 };
 

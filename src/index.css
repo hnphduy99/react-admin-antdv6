@@ -136,14 +136,6 @@ thead .ant-table-cell {
 }
 
 /* notification */
-.ant-notification-notice {
-  @apply p-3!;
-}
-
-.ant-notification-notice-wrapper {
-  @apply rounded-sm!;
-}
-
 .ant-notification-notice .title {
   @apply font-bold;
 }
