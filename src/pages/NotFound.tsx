@@ -7,7 +7,7 @@ export const NotFound = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
+    <div className="flex items-center justify-center min-h-screen bg-white">
       <Result
         status="404"
         title="404"

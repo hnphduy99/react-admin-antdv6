@@ -8,12 +8,13 @@ import {
   UserOutlined
 } from "@ant-design/icons";
 
-interface MenuItemData {
+export interface MenuItemData {
   key: string;
   icon?: React.ReactNode;
   label: string;
   children?: MenuItemData[];
   path?: string;
+  permissionKey?: string;
 }
 
 export const sidebarNavigation: MenuItemData[] = [
@@ -21,7 +22,8 @@ export const sidebarNavigation: MenuItemData[] = [
     key: "/dashboard",
     icon: <DashboardOutlined />,
     label: "menu.dashboard",
-    path: "/dashboard"
+    path: "/dashboard",
+    permissionKey: "dashboard"
   },
   {
     key: "/example",
@@ -51,7 +53,8 @@ export const sidebarNavigation: MenuItemData[] = [
     path: "/users",
     children: [
       {
-        key: "/users/list",
+        key: "users",
+        permissionKey: "users",
         label: "menu.userList",
         path: "/users/list",
         icon: null
@@ -109,7 +112,8 @@ export const sidebarNavigation: MenuItemData[] = [
     path: "/products",
     children: [
       {
-        key: "/products/list",
+        key: "products",
+        permissionKey: "products",
         label: "menu.productList",
         path: "/products/list",
         icon: null
