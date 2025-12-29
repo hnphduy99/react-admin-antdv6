@@ -53,6 +53,8 @@ export const AppRoutes = () => {
         >
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/create-password" element={<CreateNewPassword />} />
         </Route>
 
         {/* Protected routes with MainLayout */}
@@ -70,8 +72,6 @@ export const AppRoutes = () => {
           <Route path="/products/list" element={<ProductList />} />
           <Route path="/users/list" element={<UserList />} />
           <Route path="/change-password" element={<ChangePassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/create-password" element={<CreateNewPassword />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="ui">
             <Route path="notification" element={<NotificationPage />} />

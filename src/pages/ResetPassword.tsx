@@ -1,8 +1,10 @@
-import { Card, Form, Input, Button, message, Result } from "antd";
+import { Card, Form, Input, Button, message, Result, Typography } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { mockApi } from "@/services/mock";
+
+const { Text } = Typography;
 
 export const ResetPassword = () => {
   const { t } = useTranslation();
@@ -64,44 +66,36 @@ export const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 p-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">{t("common.admin")}</h1>
-          <p className="text-gray-600 dark:text-gray-400">{t("common.subtitle")}</p>
-        </div>
-
-        <Card title={t("password.resetPassword")} className="shadow-xl">
-          <p className="mb-6 text-gray-600 dark:text-gray-400">
-            Enter your email address and we'll send you a link to reset your password.
-          </p>
-
-          <Form form={form} layout="vertical" onFinish={onSendEmail} requiredMark={false}>
-            <Form.Item
-              label={t("auth.email")}
-              name="email"
-              rules={[
-                { required: true, message: t("validation.emailRequired") },
-                { type: "email", message: t("validation.emailInvalid") }
-              ]}
-            >
-              <Input prefix={<MailOutlined />} placeholder="your.email@example.com" size="large" />
-            </Form.Item>
-
-            <Form.Item>
-              <Button type="primary" htmlType="submit" size="large" block loading={loading}>
-                Send Reset Link
-              </Button>
-            </Form.Item>
-
-            <div className="text-center">
-              <Button type="link" onClick={() => (window.location.href = "/login")}>
-                Back to Login
-              </Button>
-            </div>
-          </Form>
-        </Card>
+    <Card className="shadow-xl">
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold mb-2">{t("password.resetPassword")}</h2>
+        <Text type="secondary">Enter your email address and we'll send you a link to reset your password</Text>
       </div>
-    </div>
+
+      <Form form={form} layout="vertical" onFinish={onSendEmail}>
+        <Form.Item
+          label={t("auth.email")}
+          name="email"
+          rules={[
+            { required: true, message: t("validation.emailRequired") },
+            { type: "email", message: t("validation.emailInvalid") }
+          ]}
+        >
+          <Input prefix={<MailOutlined />} placeholder="your.email@example.com" size="large" />
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit" size="large" block loading={loading}>
+            Send Reset Link
+          </Button>
+        </Form.Item>
+
+        <div className="text-center">
+          <Button type="link" onClick={() => (window.location.href = "/login")}>
+            Back to Login
+          </Button>
+        </div>
+      </Form>
+    </Card>
   );
 };

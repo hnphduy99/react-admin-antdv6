@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { UserFormModal } from "./UserFormModal";
 import { createUserColumns } from "./userColumns";
 import { TableWithPagination } from "@/components/common";
+import PageTitle from "@/components/PageTitle/PageTitle";
 
 export const UserList = () => {
   const { t } = useTranslation();
@@ -45,6 +46,8 @@ export const UserList = () => {
 
   return (
     <>
+      <PageTitle>{t("user.userList")}</PageTitle>
+
       <Card className="shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
           <h2 className="text-xl font-bold m-0 uppercase">{t("user.userList")}</h2>

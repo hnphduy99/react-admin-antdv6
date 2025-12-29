@@ -1,5 +1,7 @@
 export const WEB_NAME = import.meta.env.VITE_WEB_NAME || "";
 
+export const WEB_DESC = import.meta.env.VITE_WEB_DESC || "";
+
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 export const PER_PAGE = import.meta.env.VITE_PER_PAGE || 20;
