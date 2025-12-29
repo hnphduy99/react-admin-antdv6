@@ -1,23 +1,23 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAppSelector } from "@/hooks/useRedux";
-import { hasActionPermission } from "@/utils/permissions";
-import type { ResourceAction } from "@/types/permissions";
+import { AuthLayout } from "@/layouts/AuthLayout/AuthLayout";
 import { MainLayout } from "@/layouts/Main/MainLayout/MainLayout";
+import { ChangePassword } from "@/pages/ChangePassword";
+import { CreateNewPassword } from "@/pages/CreateNewPassword";
 import { Dashboard } from "@/pages/Dashboard";
-import { Login } from "@/pages/Login";
-import { Register } from "@/pages/Register";
-import { NotFound } from "@/pages/NotFound";
-import { TableExample } from "@/pages/TableExample";
 import { FormExample } from "@/pages/FormExample";
+import { Login } from "@/pages/Login";
+import { NotFound } from "@/pages/NotFound";
+import { ProductList } from "@/pages/products/ProductList";
+import { Register } from "@/pages/Register";
+import { ResetPassword } from "@/pages/ResetPassword";
+import { Settings } from "@/pages/Settings";
+import { TableExample } from "@/pages/TableExample";
+import NotificationPage from "@/pages/ui/NotificationPage";
 import { UserProfile } from "@/pages/UserProfile";
 import { UserList } from "@/pages/users/UserList";
-import { ChangePassword } from "@/pages/ChangePassword";
-import { ResetPassword } from "@/pages/ResetPassword";
-import { CreateNewPassword } from "@/pages/CreateNewPassword";
-import { Settings } from "@/pages/Settings";
-import { AuthLayout } from "@/layouts/AuthLayout/AuthLayout";
-import { ProductList } from "@/pages/products/ProductList";
-import NotificationPage from "@/pages/ui/NotificationPage";
+import type { ResourceAction } from "@/types/permissions";
+import { hasActionPermission } from "@/utils/permissions";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -40,12 +40,9 @@ const PermissionRoute = ({
   action?: keyof ResourceAction;
   children: React.ReactNode;
 }) => {
-  const user = useAppSelector((state) => state.auth.user);
-  const { phan_quyen } = user || {};
-
   if (!permissionKey) return <>{children}</>;
 
-  if (!hasActionPermission(phan_quyen, permissionKey, action)) {
+  if (!hasActionPermission(permissionKey, action)) {
     return <Navigate to="/404" replace />;
   }
 

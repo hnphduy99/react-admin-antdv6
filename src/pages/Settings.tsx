@@ -69,7 +69,7 @@ export const Settings = () => {
             layout="vertical"
             onFinish={onFinish}
             initialValues={{
-              name: user?.name || "Admin User",
+              name: user?.ho_va_ten || "Admin User",
               email: user?.email || "admin@example.com"
             }}
           >
