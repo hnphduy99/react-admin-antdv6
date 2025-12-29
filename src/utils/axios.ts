@@ -1,7 +1,8 @@
+import { API_BASE_URL } from "@/constants/constants";
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import axios from "axios";
+import { getDeviceId } from "./deviceId";
 import { getToken, signOut } from "./redux";
-import { API_BASE_URL } from "@/constants/constants";
 
 // Create axios instance
 const axiosInstance: AxiosInstance = axios.create({
@@ -16,7 +17,7 @@ const axiosInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getToken();
-    const deviceId = 1;
+    const deviceId = getDeviceId();
 
     config.headers.device_id = deviceId;
 
