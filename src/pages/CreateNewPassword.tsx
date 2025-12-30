@@ -165,3 +165,5 @@ export const CreateNewPassword = () => {
     </Card>
   );
 };
+
+export default CreateNewPassword;

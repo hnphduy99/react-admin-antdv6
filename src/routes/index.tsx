@@ -1,23 +1,41 @@
+import { withLoading } from "@/hocs/withLoading.hoc";
 import { useAppSelector } from "@/hooks/useRedux";
 import { AuthLayout } from "@/layouts/AuthLayout/AuthLayout";
 import { MainLayout } from "@/layouts/Main/MainLayout/MainLayout";
-import { ChangePassword } from "@/pages/ChangePassword";
-import { CreateNewPassword } from "@/pages/CreateNewPassword";
-import { Dashboard } from "@/pages/Dashboard";
-import { FormExample } from "@/pages/FormExample";
-import { Login } from "@/pages/Login";
-import { NotFound } from "@/pages/NotFound";
-import { ProductList } from "@/pages/products/ProductList";
-import { Register } from "@/pages/Register";
-import { ResetPassword } from "@/pages/ResetPassword";
-import { Settings } from "@/pages/Settings";
-import { TableExample } from "@/pages/TableExample";
-import NotificationPage from "@/pages/ui/NotificationPage";
-import { UserProfile } from "@/pages/UserProfile";
-import { UserList } from "@/pages/users/UserList";
 import type { ResourceAction } from "@/types/permissions";
 import { hasActionPermission } from "@/utils/permissions";
+import { lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
+const DashboardPage = lazy(() => import("@/pages/Dashboard"));
+const LoginPage = lazy(() => import("@/pages/Login"));
+const RegisterPage = lazy(() => import("@/pages/Register"));
+const ResetPasswordPage = lazy(() => import("@/pages/ResetPassword"));
+const CreateNewPasswordPage = lazy(() => import("@/pages/CreateNewPassword"));
+const FormExamplePage = lazy(() => import("@/pages/FormExample"));
+const UserProfilePage = lazy(() => import("@/pages/UserProfile"));
+const ProductListPage = lazy(() => import("@/pages/products/ProductList"));
+const UserListPage = lazy(() => import("@/pages/users/UserList"));
+const ChangePasswordPage = lazy(() => import("@/pages/ChangePassword"));
+const SettingsPage = lazy(() => import("@/pages/Settings"));
+const NotificationPageContent = lazy(() => import("@/pages/ui/NotificationPage"));
+const NotFoundPage = lazy(() => import("@/pages/NotFound"));
+/*import-component-here*/
+
+const Dashboard = withLoading(DashboardPage);
+const Login = withLoading(LoginPage);
+const Register = withLoading(RegisterPage);
+const ResetPassword = withLoading(ResetPasswordPage);
+const CreateNewPassword = withLoading(CreateNewPasswordPage);
+const FormExample = withLoading(FormExamplePage);
+const UserProfile = withLoading(UserProfilePage);
+const ProductList = withLoading(ProductListPage);
+const UserList = withLoading(UserListPage);
+const ChangePassword = withLoading(ChangePasswordPage);
+const Settings = withLoading(SettingsPage);
+const NotificationPage = withLoading(NotificationPageContent);
+const NotFound = withLoading(NotFoundPage);
+/*import-component-with-loading-here*/
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -87,7 +105,6 @@ export const AppRoutes = () => {
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/table" element={<TableExample />} />
           <Route path="/form" element={<FormExample />} />
           <Route path="/users/profile" element={<UserProfile />} />
           <Route
@@ -106,6 +123,7 @@ export const AppRoutes = () => {
               </PermissionRoute>
             }
           />
+          {/*Declare route here*/}
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="ui">

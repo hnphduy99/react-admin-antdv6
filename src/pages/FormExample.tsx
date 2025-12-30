@@ -213,3 +213,5 @@ export const FormExample = () => {
     </div>
   );
 };
+
+export default FormExample;

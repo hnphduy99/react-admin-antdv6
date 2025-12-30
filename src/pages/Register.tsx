@@ -1,11 +1,9 @@
-import { useState } from "react";
-import { Card, Form, Input, Button, Checkbox, Typography, message } from "antd";
-import { UserOutlined, MailOutlined, LockOutlined } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useAppDispatch } from "@/hooks/useRedux";
-import { login } from "@/store/slices/authSlice";
 import { mockApi } from "@/services/mock";
+import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Card, Checkbox, Form, Input, Typography, message } from "antd";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -19,7 +17,6 @@ interface RegisterFormValues {
 
 export const Register = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -33,12 +30,7 @@ export const Register = () => {
 
       if (response.success) {
         // Auto-login after successful registration
-        dispatch(
-          login({
-            ...response.data.user,
-            token: response.data.token
-          })
-        );
+        // dispatch(login(response.data));
 
         message.success(response.message || t("auth.registerSuccess"));
         navigate("/dashboard");
@@ -138,3 +130,5 @@ export const Register = () => {
     </Card>
   );
 };
+
+export default Register;

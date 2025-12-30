@@ -197,3 +197,5 @@ export const UserProfile = () => {
     </Row>
   );
 };
+
+export default UserProfile;

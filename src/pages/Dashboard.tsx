@@ -52,7 +52,7 @@ interface Activity {
   type: string;
 }
 
-export const Dashboard = () => {
+const Dashboard = () => {
   const { t } = useTranslation();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -251,3 +251,5 @@ export const Dashboard = () => {
     </>
   );
 };
+
+export default Dashboard;

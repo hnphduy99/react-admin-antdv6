@@ -248,3 +248,5 @@ export const Settings = () => {
     </Row>
   );
 };
+
+export default Settings;

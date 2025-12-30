@@ -32,12 +32,6 @@ export const sidebarNavigation: MenuItemData[] = [
     path: "/example",
     children: [
       {
-        key: "/table",
-        icon: null,
-        label: "menu.tableExample",
-        path: "/table"
-      },
-      {
         key: "/form",
         icon: null,
         label: "menu.formExample",
@@ -133,6 +127,7 @@ export const sidebarNavigation: MenuItemData[] = [
       }
     ]
   },
+  /*new-sidebar-nav-here*/
   {
     key: "/settings",
     icon: <SettingOutlined />,

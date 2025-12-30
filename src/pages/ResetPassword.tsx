@@ -99,3 +99,5 @@ export const ResetPassword = () => {
     </Card>
   );
 };
+
+export default ResetPassword;
