@@ -3,7 +3,7 @@ import { notification, type NotificationArgsProps } from "antd";
 
 type NotificationType = "success" | "info" | "warning" | "error";
 
-interface NotificationContextType {
+export interface NotificationContextType {
   success: (config: NotificationArgsProps) => void;
   info: (config: NotificationArgsProps) => void;
   warning: (config: NotificationArgsProps) => void;

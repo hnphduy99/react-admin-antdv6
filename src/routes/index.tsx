@@ -89,14 +89,7 @@ export const AppRoutes = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/table" element={<TableExample />} />
           <Route path="/form" element={<FormExample />} />
-          <Route
-            path="/users/profile"
-            element={
-              <PermissionRoute permissionKey="profile">
-                <UserProfile />
-              </PermissionRoute>
-            }
-          />
+          <Route path="/users/profile" element={<UserProfile />} />
           <Route
             path="/products/list"
             element={

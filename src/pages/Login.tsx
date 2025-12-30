@@ -36,19 +36,19 @@ export const Login = () => {
 
         notification.success({
           title: "Login successful!",
-          message: response.message || "Login successful!"
+          description: response.message || "Login successful!"
         });
         navigate("/dashboard");
       } else {
         notification.error({
           title: "Login failed!",
-          message: response.message || "Login failed. Please try again."
+          description: response.message || "Login failed. Please try again."
         });
       }
     } catch (error: any) {
       notification.error({
         title: "Login failed!",
-        message: error.message || "Login failed. Please try again."
+        description: error.message || "Login failed. Please try again."
       });
     } finally {
       setLoading(false);
