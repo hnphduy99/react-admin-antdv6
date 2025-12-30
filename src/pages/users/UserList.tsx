@@ -2,6 +2,7 @@ import { userApi } from "@/apis/user.api";
 import { ExportExcel, TableWithPagination } from "@/components/common";
 import { TopSearchBar } from "@/components/filters/TopSearchBar";
 import PageTitle from "@/components/PageTitle/PageTitle";
+import { RESOURCE } from "@/configs/api-config";
 import { useCrudManagement } from "@/hooks/useCrudManagement";
 import type { IUser } from "@/interfaces/user.interface";
 import { getPermissionByResource } from "@/utils/permissions";
@@ -14,8 +15,9 @@ import { UserFormModal } from "./UserFormModal";
 
 export const UserList = () => {
   const { t } = useTranslation();
+  const entityName = RESOURCE.USER;
 
-  const actions = getPermissionByResource("users");
+  const actions = getPermissionByResource(entityName);
   const canViewTable = actions?.index;
   const canCreate = actions?.create;
   const canUpdate = actions?.edit;
@@ -47,7 +49,7 @@ export const UserList = () => {
       update: userApi.updateUser,
       delete: userApi.deleteUser
     },
-    entityName: "Users"
+    entityName
   });
 
   const columns = createUserColumns(t, handleView, handleEdit, handleDelete, handleColumnSearch, pagination, {
