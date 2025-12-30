@@ -1,53 +1,71 @@
 import type { ResourceAction, UserPermission } from "@/types/permissions";
 import { getUserPermissions } from "./redux";
+import { DEFAULT_PERMISSION } from "@/constants/constants";
+
+const fullAccess: ResourceAction = {
+  index: true,
+  create: true,
+  edit: true,
+  delete: true,
+  show: true,
+  export: true
+};
 
 /**
- * Check permission based on resource and action (New system)
+ * Check permission based on resource and action
  * @param resource - Resource name
  * @param action - Action to check (default to showMenu)
- * @param defaultIfMissing - Whether to allow access if resource/permissions list is missing (default: false)
+ * @param defaultIfMissing - Whether to allow access if resource/permissions list is missing
  * @returns boolean indicating if user has permission
  */
 export const hasActionPermission = (
-  resource: string | undefined,
+  resource?: string,
   action: keyof ResourceAction = "showMenu",
-  defaultIfMissing: boolean = false
+  defaultIfMissing = DEFAULT_PERMISSION
 ): boolean => {
-  const permissionsList = getUserPermissions();
-  if (!permissionsList || !resource) return defaultIfMissing;
+  if (!resource) return defaultIfMissing;
 
-  let permissions: UserPermission[] = [];
+  const rawPermissions = getUserPermissions();
+  if (!rawPermissions) return defaultIfMissing;
+
+  let permissions: UserPermission[];
+
   try {
-    permissions = typeof permissionsList === "string" ? JSON.parse(permissionsList) : permissionsList;
+    permissions = Array.isArray(rawPermissions) ? rawPermissions : JSON.parse(rawPermissions);
   } catch {
     return defaultIfMissing;
   }
 
   if (!Array.isArray(permissions)) return defaultIfMissing;
 
-  const resourcePermission = permissions.find((p) => p.name === resource);
-  if (!resourcePermission) return defaultIfMissing;
-
-  const actionValue = resourcePermission.actions[action];
-  // If action is not defined in the resource's actions, use the default
-  if (actionValue === undefined) return defaultIfMissing;
-
-  return !!actionValue;
+  return permissions.find((p) => p.name === resource)?.actions?.[action] ?? defaultIfMissing;
 };
 
-export const getPermissionByResource = (resource: string | undefined): ResourceAction | undefined => {
-  const permissionsList = getUserPermissions();
-  if (!permissionsList || !resource) return undefined;
+/**
+ * Get permission by resource
+ * @param resource - Resource name
+ * @param defaultFullAccess - Whether to allow access if resource/permissions list is missing
+ * @returns permission object or undefined
+ */
+export const getPermissionByResource = (
+  resource?: string,
+  defaultFullAccess = DEFAULT_PERMISSION
+): ResourceAction | undefined => {
+  const fallback = defaultFullAccess ? fullAccess : undefined;
+  if (!resource) return fallback;
 
-  let permissions: UserPermission[] = [];
+  const rawPermissions = getUserPermissions();
+  if (!rawPermissions) return fallback;
+
+  let permissions: UserPermission[];
+
   try {
-    permissions = typeof permissionsList === "string" ? JSON.parse(permissionsList) : permissionsList;
+    permissions = Array.isArray(rawPermissions) ? rawPermissions : JSON.parse(rawPermissions);
   } catch {
-    return undefined;
+    return fallback;
   }
 
-  if (!Array.isArray(permissions)) return undefined;
-  const permission = permissions.find((p) => p.name === resource);
-  if (!permission) return undefined;
-  return permission.actions;
+  if (!Array.isArray(permissions)) return fallback;
+
+  return permissions.find((p) => p.name === resource)?.actions ?? fallback;
 };
