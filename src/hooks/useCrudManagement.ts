@@ -47,7 +47,7 @@ export interface PaginationConfig {
  *   entityName: "User"
  * });
  */
-export const useCrudManagement = <T extends { id: number }>(config: CrudConfig<T>) => {
+export const useCrudManagement = <T extends { id: string | number }>(config: CrudConfig<T>) => {
   const [data, setData] = useState<T[]>([]);
   const [columnSearches, setColumnSearches] = useState<ColumnSearchItem[]>([]);
   const [loading, setLoading] = useState(false);

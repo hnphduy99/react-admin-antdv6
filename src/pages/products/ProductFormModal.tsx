@@ -1,13 +1,13 @@
-import { Modal, Form, Input, Select, InputNumber, Row, Col } from "antd";
+import type { IProduct } from "@/interfaces/product.interface";
+import { Col, Form, Input, InputNumber, Modal, Row, Select } from "antd";
 import { useTranslation } from "react-i18next";
-import type { Product } from "@/types";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
 interface ProductFormModalProps {
   open: boolean;
-  editingProduct: Product | null;
+  editingProduct: IProduct | null;
   loading: boolean;
   form: any;
   onOk: () => void;
@@ -19,11 +19,15 @@ export const ProductFormModal = ({ open, editingProduct, loading, form, onOk, on
 
   return (
     <Modal
-      title={editingProduct ? "Edit Product" : "Add New Product"}
+      title={
+        editingProduct ? t("common.edit") + " " + t("product.product") : t("common.addNew") + " " + t("product.product")
+      }
       open={open}
       onOk={onOk}
       onCancel={onCancel}
       confirmLoading={loading}
+      centered
+      maskClosable={false}
       width={700}
       okText={t("common.save")}
       cancelText={t("common.cancel")}
@@ -33,8 +37,8 @@ export const ProductFormModal = ({ open, editingProduct, loading, form, onOk, on
           <Col span={12}>
             <Form.Item
               name="name"
-              label="Product Name"
-              rules={[{ required: true, message: "Please input product name!" }]}
+              label={t("product.productName")}
+              rules={[{ required: true, message: t("validation.nameRequired") }]}
             >
               <Input placeholder="e.g. iPhone 15 Pro" />
             </Form.Item>
@@ -42,10 +46,10 @@ export const ProductFormModal = ({ open, editingProduct, loading, form, onOk, on
           <Col span={12}>
             <Form.Item
               name="category"
-              label="Category"
-              rules={[{ required: true, message: "Please select category!" }]}
+              label={t("product.category")}
+              rules={[{ required: true, message: t("validation.categoryRequired") }]}
             >
-              <Select placeholder="Select category">
+              <Select placeholder={t("common.select")}>
                 <Option value="Electronics">Electronics</Option>
                 <Option value="Clothing">Clothing</Option>
                 <Option value="Food">Food</Option>
@@ -60,10 +64,10 @@ export const ProductFormModal = ({ open, editingProduct, loading, form, onOk, on
           <Col span={12}>
             <Form.Item
               name="price"
-              label="Price ($)"
+              label={t("product.price")}
               rules={[
-                { required: true, message: "Please input price!" },
-                { type: "number", min: 0, message: "Price must be positive!" }
+                { required: true, message: t("validation.priceRequired") },
+                { type: "number", min: 0, message: t("validation.pricePositive") }
               ]}
             >
               <InputNumber min={0} precision={2} prefix="$" style={{ width: "100%" }} placeholder="0.00" />
@@ -72,10 +76,10 @@ export const ProductFormModal = ({ open, editingProduct, loading, form, onOk, on
           <Col span={12}>
             <Form.Item
               name="stock"
-              label="Stock Quantity"
+              label={t("product.stock")}
               rules={[
-                { required: true, message: "Please input stock!" },
-                { type: "number", min: 0, message: "Stock must be positive!" }
+                { required: true, message: t("validation.stockRequired") },
+                { type: "number", min: 0, message: t("validation.stockPositive") }
               ]}
             >
               <InputNumber min={0} style={{ width: "100%" }} placeholder="0" />
@@ -83,14 +87,14 @@ export const ProductFormModal = ({ open, editingProduct, loading, form, onOk, on
           </Col>
         </Row>
 
-        <Form.Item name="description" label="Description">
-          <TextArea rows={4} placeholder="Enter product description..." showCount maxLength={500} />
+        <Form.Item name="description" label={t("product.description")}>
+          <TextArea rows={4} placeholder={t("product.descriptionPlaceholder")} showCount maxLength={500} />
         </Form.Item>
 
-        <Form.Item name="status" label="Status" initialValue="active" rules={[{ required: true }]}>
+        <Form.Item name="status" label={t("table.status")} initialValue="active" rules={[{ required: true }]}>
           <Select>
-            <Option value="active">Active</Option>
-            <Option value="inactive">Inactive</Option>
+            <Option value="active">{t("table.active")}</Option>
+            <Option value="inactive">{t("table.inactive")}</Option>
           </Select>
         </Form.Item>
       </Form>
