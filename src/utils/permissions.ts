@@ -8,7 +8,18 @@ const fullAccess: ResourceAction = {
   edit: true,
   delete: true,
   show: true,
-  export: true
+  export: true,
+  showMenu: true
+};
+
+const noAccess: ResourceAction = {
+  index: false,
+  create: false,
+  edit: false,
+  delete: false,
+  show: false,
+  export: false,
+  showMenu: false
 };
 
 /**
@@ -45,13 +56,10 @@ export const hasActionPermission = (
  * Get permission by resource
  * @param resource - Resource name
  * @param defaultFullAccess - Whether to allow access if resource/permissions list is missing
- * @returns permission object or undefined
+ * @returns permission object
  */
-export const getPermissionByResource = (
-  resource?: string,
-  defaultFullAccess = DEFAULT_PERMISSION
-): ResourceAction | undefined => {
-  const fallback = defaultFullAccess ? fullAccess : undefined;
+export const getPermissionByResource = (resource?: string, defaultFullAccess = DEFAULT_PERMISSION): ResourceAction => {
+  const fallback = defaultFullAccess ? fullAccess : noAccess;
   if (!resource) return fallback;
 
   const rawPermissions = getUserPermissions();

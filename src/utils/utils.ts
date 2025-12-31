@@ -1,6 +1,7 @@
 import type { NotificationContextType } from "@/providers/NotificationProvider";
 import { Upload, type InputNumberProps } from "antd";
 import type { RcFile } from "antd/lib/upload";
+import dayjs from "dayjs";
 
 export const formatter: InputNumberProps<number>["formatter"] = (value) => {
   const [start, end] = `${value}`.split(".") || [];
@@ -52,3 +53,7 @@ export const getBase64 = (file: File): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = reject;
   });
+
+export const getDateValueProps = (i: string | dayjs.Dayjs | null) => ({ value: i ? dayjs(i, "YYYY-MM-DD") : null });
+
+export const getDateValueFromEvent = (i: string | dayjs.Dayjs | null) => (i ? dayjs(i).format("YYYY-MM-DD") : null);

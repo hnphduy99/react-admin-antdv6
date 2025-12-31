@@ -2,13 +2,13 @@
  * Resource-based actions (New system)
  */
 export interface ResourceAction {
-  index?: boolean;
-  create?: boolean;
-  show?: boolean;
-  edit?: boolean;
-  delete?: boolean;
+  index: boolean;
+  create: boolean;
+  show: boolean;
+  edit: boolean;
+  delete: boolean;
   export?: boolean;
-  showMenu?: boolean;
+  showMenu: boolean;
 }
 
 /**
