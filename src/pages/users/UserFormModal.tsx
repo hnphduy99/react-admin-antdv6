@@ -1,27 +1,26 @@
 import SelectWithApi from "@/components/common/SelectWithApi/SelectWithApi";
 import type { IUser } from "@/interfaces/user.interface";
 import { MailOutlined } from "@ant-design/icons";
-import { Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
+import { Col, DatePicker, Form, Input, Modal, Row, Select, type FormInstance } from "antd";
 import dayjs from "dayjs";
-import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 
 const { Option } = Select;
 
 interface UserFormModalProps {
+  t: TFunction<"translation", undefined>;
   open: boolean;
-  editingUser: IUser | null;
+  editingItem: IUser | null;
   loading: boolean;
-  form: any;
+  form: FormInstance;
   onOk: () => void;
   onCancel: () => void;
 }
 
-export const UserFormModal = ({ open, editingUser, loading, form, onOk, onCancel }: UserFormModalProps) => {
-  const { t } = useTranslation();
-
+export const UserFormModal = ({ t, open, editingItem, loading, form, onOk, onCancel }: UserFormModalProps) => {
   return (
     <Modal
-      title={editingUser ? t("common.edit") + " " + t("user.user") : t("common.addNew") + " " + t("user.user")}
+      title={editingItem ? `${t("common.edit")} ${t("user.user")}` : `${t("common.addNew")} ${t("user.user")}`}
       open={open}
       onOk={onOk}
       onCancel={onCancel}
@@ -32,7 +31,7 @@ export const UserFormModal = ({ open, editingUser, loading, form, onOk, onCancel
       okText={t("common.save")}
       cancelText={t("common.cancel")}
     >
-      <Form form={form} layout="vertical" className="mt-4">
+      <Form form={form} layout="vertical">
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item
@@ -99,7 +98,7 @@ export const UserFormModal = ({ open, editingUser, loading, form, onOk, onCancel
               <Input placeholder="user123" />
             </Form.Item>
           </Col>
-          {!editingUser && (
+          {!editingItem && (
             <>
               <Col span={8}>
                 <Form.Item

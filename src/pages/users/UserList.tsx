@@ -18,12 +18,12 @@ export const UserList = () => {
   const entityName = RESOURCE.USER;
 
   const actions = getPermissionByResource(entityName);
-  const canViewTable = actions?.index;
-  const canCreate = actions?.create;
-  const canUpdate = actions?.edit;
-  const canDelete = actions?.delete;
-  const canView = actions?.show;
-  const canExport = actions?.export;
+  const canViewTable = actions.index;
+  const canCreate = actions.create;
+  const canUpdate = actions.edit;
+  const canDelete = actions.delete;
+  const canView = actions.show;
+  const canExport = actions.export;
 
   const {
     data,
@@ -94,8 +94,9 @@ export const UserList = () => {
       </Card>
 
       <UserFormModal
+        t={t}
         open={isModalOpen}
-        editingUser={editingItem}
+        editingItem={editingItem}
         loading={loading}
         form={form}
         onOk={handleModalOk}

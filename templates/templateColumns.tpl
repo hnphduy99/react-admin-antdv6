@@ -15,10 +15,10 @@ export const create[ComponentName]Columns = (
   handleDelete: (id: string | number) => void,
   handleColumnSearch: (value: ColumnSearchValue | null, column: string) => void,
   pagination: PaginationConfig,
-  permissions?: {
-    canUpdate?: boolean;
-    canDelete?: boolean;
-    canView?: boolean;
+  permissions: {
+    canUpdate: boolean;
+    canDelete: boolean;
+    canView: boolean;
   }
 ): ColumnsType<I[ComponentName]> => [
   {
@@ -49,9 +49,9 @@ export const create[ComponentName]Columns = (
     key: "action",
     render: (_, record) => (
       <Space size={0}>
-        {permissions?.canView && <Button type="link" icon={<EyeOutlined />} onClick={() => handleView(record)} />}
-        {permissions?.canUpdate && <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record.id)} />}
-        {permissions?.canDelete && (
+        {permissions.canView && <Button type="link" icon={<EyeOutlined />} onClick={() => handleView(record)} />}
+        {permissions.canUpdate && <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record.id)} />}
+        {permissions.canDelete && (
           <Popconfirm
             title={t("table.deleteConfirm")}
             onConfirm={() => handleDelete(record.id)}

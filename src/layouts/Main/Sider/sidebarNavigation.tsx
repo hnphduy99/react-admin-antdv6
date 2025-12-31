@@ -1,3 +1,4 @@
+import { ROUTE } from "@/configs/route-config";
 import {
   BlockOutlined,
   DashboardOutlined,
@@ -41,16 +42,15 @@ export const sidebarNavigation: MenuItemData[] = [
   },
 
   {
-    key: "users",
+    key: "user-manager",
     icon: <UserOutlined />,
     label: "menu.users",
-    path: "/users",
     children: [
       {
         key: "users",
         permissionKey: "users",
         label: "menu.userList",
-        path: "/users/list",
+        path: ROUTE.USER,
         icon: null
       },
       {

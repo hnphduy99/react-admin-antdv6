@@ -43,14 +43,19 @@ const addNewModule = () => {
 
   fs.mkdirSync(moduleFolder, { recursive: true });
   fs.readdirSync("./templates").forEach((fileName) => {
+    let newPath = "";
     let newName = "";
     if (/Columns/.test(fileName)) {
       newName = fileName.replace(".tpl", ".tsx").replace("template", camelCaseName);
+      newPath = path.join(moduleFolder, newName);
+    } else if (/api/.test(fileName)) {
+      newName = fileName.replace(".tpl", ".ts").replace("template", camelCaseName);
+      newPath = path.join("./src/apis", newName);
     } else {
       newName = fileName.replace(".tpl", ".tsx").replace("template", pascalCaseName);
+      newPath = path.join(moduleFolder, newName);
     }
     const oldPath = path.join("./templates", fileName);
-    const newPath = path.join(moduleFolder, newName);
     if (fs.existsSync(newPath)) {
       return false;
     }
@@ -80,9 +85,9 @@ const addNewModule = () => {
     routerConfigsContent = routerConfigsContent.replace(
       `{/*Declare route here*/}`,
       `<Route
-            path="${kebabCaseName}"
+            path={ROUTE.${constantCaseName}}
             element={
-              <PermissionRoute permissionKey="${kebabCaseName}">
+              <PermissionRoute permissionKey={RESOURCE.${constantCaseName}}>
                 <${pascalCaseName}List />
               </PermissionRoute>
             }
@@ -106,9 +111,18 @@ const addNewModule = () => {
     let apiConfigsContent = fs.readFileSync(apiConfigsPath).toString();
     apiConfigsContent = apiConfigsContent.replace(
       `/*new-api-path-here*/`,
-      `,${constantCaseName}: '/${kebabCaseName}',` + `\n  /*new-api-path-here*/`
+      `,${constantCaseName}: "/${kebabCaseName}",` + `\n  /*new-api-path-here*/`
     );
     fs.writeFileSync(apiConfigsPath, apiConfigsContent);
+
+    // Thêm cấu hình API Configs
+    const routeConfigsPath = "./src/configs/route-config.ts";
+    let routeConfigsContent = fs.readFileSync(routeConfigsPath).toString();
+    routeConfigsContent = routeConfigsContent.replace(
+      `/*new-route-path-here*/`,
+      `,${constantCaseName}: "/${kebabCaseName}",` + `\n  /*new-route-path-here*/`
+    );
+    fs.writeFileSync(routeConfigsPath, routeConfigsContent);
 
     // Thêm sidebar navigation
     const sidebarnavConfigsPath = "./src/layouts/Main/Sider/SidebarNavigation.tsx";
@@ -120,10 +134,29 @@ const addNewModule = () => {
     permissionKey: "${kebabCaseName}",
     label: "menu.${kebabCaseName}",
     icon: <BlockOutlined />,
-    path: "/${kebabCaseName}"
+    path: ROUTE.${constantCaseName}
   },` + `\n  /*new-sidebar-nav-here*/`
     );
     fs.writeFileSync(sidebarnavConfigsPath, sidebarConfigsContent);
+  } catch (error) {
+    console.error("@addNewModule > " + error.stack);
+  }
+
+  try {
+    // Thêm interface
+    const interfaceFileName = `${camelCaseName}.interface.ts`;
+    const interfaceFilePath = `./src/interfaces/${interfaceFileName}`;
+
+    if (!fs.existsSync(interfaceFilePath)) {
+      const interfaceContent = `export interface I${pascalCaseName} {
+  id: number;
+  ngay_tao: string;
+  ngay_cap_nhat: string;
+}
+`;
+      fs.writeFileSync(interfaceFilePath, interfaceContent);
+      console.log("-> generated: " + interfaceFilePath);
+    }
   } catch (error) {
     console.error("@addNewModule > " + error.stack);
   }

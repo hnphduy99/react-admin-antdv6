@@ -1,22 +1,21 @@
 import type { I[ComponentName] } from "@/interfaces/[componentName].interface";
-import { Form, Modal } from "antd";
-import { useTranslation } from "react-i18next";
+import { Form, Modal, type FormInstance } from "antd";
+import type { TFunction } from "i18next";
 
 interface [ComponentName]FormModalProps {
+  t: TFunction<"translation", undefined>;
   open: boolean;
-  editing[ComponentName]: I[ComponentName] | null;
+  editingItem: I[ComponentName] | null;
   loading: boolean;
-  form: any;
+  form: FormInstance;
   onOk: () => void;
   onCancel: () => void;
 }
 
-export const [ComponentName]FormModal = ({ open, editing[ComponentName], loading, form, onOk, onCancel }: [ComponentName]FormModalProps) => {
-  const { t } = useTranslation();
-
+export const [ComponentName]FormModal = ({ t, open, editingItem, loading, form, onOk, onCancel }: [ComponentName]FormModalProps) => {
   return (
     <Modal
-      title={editing[ComponentName] ? t("common.edit") + " " + t("[componentName].[componentName]") : t("common.addNew") + " " + t("[componentName].[componentName]")}
+      title={editingItem ? `${t("common.edit")} ${t("[componentName].[componentName]")}` : `${t("common.addNew")} ${t("[componentName].[componentName]")}`}
       open={open}
       onOk={onOk}
       onCancel={onCancel}
@@ -27,7 +26,7 @@ export const [ComponentName]FormModal = ({ open, editing[ComponentName], loading
       okText={t("common.save")}
       cancelText={t("common.cancel")}
     >
-      <Form form={form} layout="vertical" className="mt-4">
+      <Form form={form} layout="vertical">
         //Create form here
       </Form>
     </Modal>

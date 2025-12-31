@@ -2,6 +2,7 @@ import { [componentName]Api } from "@/apis/[componentName].api";
 import { ExportExcel, TableWithPagination } from "@/components/common";
 import { TopSearchBar } from "@/components/filters/TopSearchBar";
 import PageTitle from "@/components/PageTitle/PageTitle";
+import { RESOURCE } from "@/configs/api-config";
 import { useCrudManagement } from "@/hooks/useCrudManagement";
 import type { I[ComponentName] } from "@/interfaces/[componentName].interface";
 import { getPermissionByResource } from "@/utils/permissions";
@@ -14,8 +15,9 @@ import { [ComponentName]FormModal } from "./[ComponentName]FormModal";
 
 const [ComponentName]List = () => {
   const { t } = useTranslation();
+  const entityName = RESOURCE.[COMPONENT_NAME];
 
-  const actions = getPermissionByResource("[component-name]");
+  const actions = getPermissionByResource(entityName);
   const canViewTable = actions?.index;
   const canCreate = actions?.create;
   const canUpdate = actions?.edit;
@@ -47,7 +49,7 @@ const [ComponentName]List = () => {
       update: [componentName]Api.update[ComponentName],
       delete: [componentName]Api.delete[ComponentName]
     },
-    entityName: "[component-name]"
+    entityName
   });
 
   const columns = create[ComponentName]Columns(t, handleView, handleEdit, handleDelete, handleColumnSearch, pagination, {
@@ -92,8 +94,9 @@ const [ComponentName]List = () => {
       </Card>
 
       <[ComponentName]FormModal
+        t={t}
         open={isModalOpen}
-        editing[ComponentName]={editingItem}
+        editingItem={editingItem}
         loading={loading}
         form={form}
         onOk={handleModalOk}

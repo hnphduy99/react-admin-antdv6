@@ -5,6 +5,7 @@ export const ROUTE = {
   UPDATE_PASSWORD: "/update-password",
   RESET: "/reset-password",
   DASHBOARD: "/dashboard",
-  ROLE: "/roles",
-  USER: "/users"
+  ROLE: "/role",
+  USER: "/user"
+  /*new-route-path-here*/
 };

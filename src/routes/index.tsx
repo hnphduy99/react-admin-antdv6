@@ -1,3 +1,5 @@
+import { RESOURCE } from "@/configs/api-config";
+import { ROUTE } from "@/configs/route-config";
 import { withLoading } from "@/hocs/withLoading.hoc";
 import { useAppSelector } from "@/hooks/useRedux";
 import { AuthLayout } from "@/layouts/AuthLayout/AuthLayout";
@@ -58,6 +60,7 @@ const PermissionRoute = ({
   action?: keyof ResourceAction;
   children: React.ReactNode;
 }) => {
+  permissionKey = permissionKey?.replace("/", "");
   if (!permissionKey) return <>{children}</>;
 
   if (!hasActionPermission(permissionKey, action)) {
@@ -90,7 +93,7 @@ export const AppRoutes = () => {
             // </PublicRoute>
           }
         >
-          <Route path="/login" element={<Login />} />
+          <Route path={ROUTE.LOGIN} element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/create-password" element={<CreateNewPassword />} />
@@ -108,7 +111,7 @@ export const AppRoutes = () => {
           <Route path="/form" element={<FormExample />} />
           <Route path="/users/profile" element={<UserProfile />} />
           <Route
-            path="/products/list"
+            path="/products"
             element={
               <PermissionRoute permissionKey="products">
                 <ProductList />
@@ -116,9 +119,9 @@ export const AppRoutes = () => {
             }
           />
           <Route
-            path="/users/list"
+            path={ROUTE.USER}
             element={
-              <PermissionRoute permissionKey="users">
+              <PermissionRoute permissionKey={RESOURCE.USER}>
                 <UserList />
               </PermissionRoute>
             }
