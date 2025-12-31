@@ -102,13 +102,13 @@ const addNewModule = () => {
     fs.writeFileSync(routerConfigsPath, routerConfigsContent);
 
     // Thêm cấu hình API Configs
-    // const apiConfigsPath = "./src/configs/api-configs.ts";
-    // let apiConfigsContent = fs.readFileSync(apiConfigsPath).toString();
-    // apiConfigsContent = apiConfigsContent.replace(
-    //   `/*new-api-path-here*/`,
-    //   `${constantCaseName}: '/${kebabCaseName}',` + `\n  /*new-api-path-here*/`
-    // );
-    // fs.writeFileSync(apiConfigsPath, apiConfigsContent);
+    const apiConfigsPath = "./src/configs/api-config.ts";
+    let apiConfigsContent = fs.readFileSync(apiConfigsPath).toString();
+    apiConfigsContent = apiConfigsContent.replace(
+      `/*new-api-path-here*/`,
+      `,${constantCaseName}: '/${kebabCaseName}',` + `\n  /*new-api-path-here*/`
+    );
+    fs.writeFileSync(apiConfigsPath, apiConfigsContent);
 
     // Thêm sidebar navigation
     const sidebarnavConfigsPath = "./src/layouts/Main/Sider/SidebarNavigation.tsx";

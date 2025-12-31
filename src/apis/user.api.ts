@@ -3,6 +3,7 @@ import type { IUser } from "@/interfaces/user.interface";
 import axiosInstance from "@/utils/axios";
 import type { ApiResponse } from "./auth.api";
 import type { ColumnSearchItem } from "@/hooks/useCrudManagement";
+import { RESOURCE } from "@/configs/api-config";
 
 export interface PaginatedResponse<T> {
   collection: T[];
@@ -23,25 +24,25 @@ export const userApi = {
     column_sort: string = COLUMN_SORT,
     direction_sort: string = DIRECTION_SORT
   ) => {
-    const response = await axiosInstance.get<ApiResponse<PaginatedResponse<IUser>>>("/users", {
+    const response = await axiosInstance.get<ApiResponse<PaginatedResponse<IUser>>>(RESOURCE.USER, {
       params: { page, limit, column_sort, direction_sort, f }
     });
     return response.data;
   },
   getUserById: async (id: string | number) => {
-    const response = await axiosInstance.get<ApiResponse<IUser>>(`/users/${id}`);
+    const response = await axiosInstance.get<ApiResponse<IUser>>(`${RESOURCE.USER}/${id}`);
     return response.data;
   },
   createUser: async (user: IUser) => {
-    const response = await axiosInstance.post<ApiResponse<IUser>>("/users", user);
+    const response = await axiosInstance.post<ApiResponse<IUser>>(RESOURCE.USER, user);
     return response.data;
   },
   updateUser: async (id: string | number, user: IUser) => {
-    const response = await axiosInstance.patch<ApiResponse<IUser>>(`/users/${id}`, user);
+    const response = await axiosInstance.patch<ApiResponse<IUser>>(`${RESOURCE.USER}/${id}`, user);
     return response.data;
   },
   deleteUser: async (id: string | number) => {
-    const response = await axiosInstance.delete<ApiResponse<IUser>>(`/users/${id}`);
+    const response = await axiosInstance.delete<ApiResponse<IUser>>(`${RESOURCE.USER}/${id}`);
     return response.data;
   }
 };
