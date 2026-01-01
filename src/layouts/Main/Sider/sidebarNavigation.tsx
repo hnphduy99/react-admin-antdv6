@@ -54,9 +54,9 @@ export const sidebarNavigation: MenuItemData[] = [
         icon: null
       },
       {
-        key: "/users/profile",
+        key: "profile",
         label: "menu.userProfile",
-        path: "/users/profile",
+        path: ROUTE.PROFILE,
         icon: null
       }
     ]
@@ -68,33 +68,33 @@ export const sidebarNavigation: MenuItemData[] = [
     path: "/auth",
     children: [
       {
-        key: "/register",
+        key: "register",
         label: "menu.register",
-        path: "/register",
+        path: ROUTE.REGISTER,
         icon: null
       },
       {
-        key: "/login",
+        key: "login",
         label: "menu.login",
-        path: "/login",
+        path: ROUTE.LOGIN,
         icon: null
       },
       {
-        key: "/change-password",
+        key: "change-password",
         label: "menu.changePassword",
-        path: "/change-password",
+        path: ROUTE.CHANGE_PASSWORD,
         icon: null
       },
       {
-        key: "/reset-password",
+        key: "reset-password",
         label: "menu.resetPassword",
-        path: "/reset-password",
+        path: ROUTE.RESET_PASSWORD,
         icon: null
       },
       {
-        key: "/create-password",
+        key: "create-password",
         label: "menu.createPassword",
-        path: "/create-password",
+        path: ROUTE.CREATE_PASSWORD,
         icon: null
       }
     ]

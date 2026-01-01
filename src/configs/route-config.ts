@@ -1,11 +1,17 @@
 export const ROUTE = {
   LOGIN: "/login",
   LOGOUT: "/logout",
-  FORGOTPASS: "/forgot-password",
+  REGISTER: "/register",
+  CREATE_PASSWORD: "/create-password",
+  CHANGE_PASSWORD: "/change-password",
+  FORGOT_PASSWORD: "/forgot-password",
   UPDATE_PASSWORD: "/update-password",
-  RESET: "/reset-password",
+  RESET_PASSWORD: "/reset-password",
   DASHBOARD: "/dashboard",
   ROLE: "/role",
-  USER: "/user"
+  USER: "/user",
+  PROFILE: "/profile",
+  PERSONAL_INFO: "/personal-info",
+  NOT_FOUND: "/404"
   /*new-route-path-here*/
 };

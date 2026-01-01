@@ -1,3 +1,4 @@
+import ProfileLayout from "@/components/profile/ProfileLayout";
 import { RESOURCE } from "@/configs/api-config";
 import { ROUTE } from "@/configs/route-config";
 import { withLoading } from "@/hocs/withLoading.hoc";
@@ -15,10 +16,10 @@ const RegisterPage = lazy(() => import("@/pages/Register"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPassword"));
 const CreateNewPasswordPage = lazy(() => import("@/pages/CreateNewPassword"));
 const FormExamplePage = lazy(() => import("@/pages/FormExample"));
-const UserProfilePage = lazy(() => import("@/pages/UserProfile"));
+const PersonalInfoPage = lazy(() => import("@/pages/PersonalInfoPage"));
 const ProductListPage = lazy(() => import("@/pages/products/ProductList"));
 const UserListPage = lazy(() => import("@/pages/users/UserList"));
-const ChangePasswordPage = lazy(() => import("@/pages/ChangePassword"));
+const ChangePasswordPage = lazy(() => import("@/pages/ChangePasswordPage"));
 const SettingsPage = lazy(() => import("@/pages/Settings"));
 const NotificationPageContent = lazy(() => import("@/pages/ui/NotificationPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFound"));
@@ -30,7 +31,7 @@ const Register = withLoading(RegisterPage);
 const ResetPassword = withLoading(ResetPasswordPage);
 const CreateNewPassword = withLoading(CreateNewPasswordPage);
 const FormExample = withLoading(FormExamplePage);
-const UserProfile = withLoading(UserProfilePage);
+const PersonalInfo = withLoading(PersonalInfoPage);
 const ProductList = withLoading(ProductListPage);
 const UserList = withLoading(UserListPage);
 const ChangePassword = withLoading(ChangePasswordPage);
@@ -44,7 +45,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={ROUTE.LOGIN} replace />;
   }
 
   return <>{children}</>;
@@ -63,7 +64,7 @@ const PermissionRoute = ({
   if (!permissionKey) return <>{children}</>;
 
   if (!hasActionPermission(permissionKey, action)) {
-    return <Navigate to="/404" replace />;
+    return <Navigate to={ROUTE.NOT_FOUND} replace />;
   }
 
   return <>{children}</>;
@@ -93,9 +94,9 @@ export const AppRoutes = () => {
           }
         >
           <Route path={ROUTE.LOGIN} element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/create-password/:token" element={<CreateNewPassword />} />
+          <Route path={ROUTE.REGISTER} element={<Register />} />
+          <Route path={ROUTE.RESET_PASSWORD} element={<ResetPassword />} />
+          <Route path={ROUTE.CREATE_PASSWORD + "/:token"} element={<CreateNewPassword />} />
         </Route>
 
         {/* Protected routes with MainLayout */}
@@ -108,7 +109,10 @@ export const AppRoutes = () => {
         >
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/form" element={<FormExample />} />
-          <Route path="/users/profile" element={<UserProfile />} />
+          <Route path={ROUTE.PROFILE} element={<ProfileLayout />}>
+            <Route path={`${ROUTE.PROFILE}/${ROUTE.PERSONAL_INFO}`} element={<PersonalInfo />} />
+            <Route path={`${ROUTE.PROFILE}/${ROUTE.CHANGE_PASSWORD}`} element={<ChangePassword />} />
+          </Route>
           <Route
             path="/products"
             element={
@@ -126,7 +130,6 @@ export const AppRoutes = () => {
             }
           />
           {/*Declare route here*/}
-          <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="ui">
             <Route path="notification" element={<NotificationPage />} />

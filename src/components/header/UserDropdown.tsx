@@ -26,7 +26,7 @@ export const UserDropdown = () => {
       key: "profile",
       icon: <UserOutlined />,
       label: t("user.profile"),
-      onClick: () => navigate("users/profile")
+      onClick: () => navigate("/profile")
     },
     {
       key: "settings",
