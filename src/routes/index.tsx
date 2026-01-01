@@ -60,7 +60,6 @@ const PermissionRoute = ({
   action?: keyof ResourceAction;
   children: React.ReactNode;
 }) => {
-  permissionKey = permissionKey?.replace("/", "");
   if (!permissionKey) return <>{children}</>;
 
   if (!hasActionPermission(permissionKey, action)) {
@@ -96,7 +95,7 @@ export const AppRoutes = () => {
           <Route path={ROUTE.LOGIN} element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/create-password" element={<CreateNewPassword />} />
+          <Route path="/create-password/:token" element={<CreateNewPassword />} />
         </Route>
 
         {/* Protected routes with MainLayout */}

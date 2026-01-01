@@ -22,7 +22,9 @@ export default {
     select: "Chọn",
     selectAll: "Chọn tất cả",
     total: "Tổng cộng {{count}} mục",
-    exportExcel: "Xuất Excel"
+    exportExcel: "Xuất Excel",
+    pleaseInput: "Vui lòng nhập",
+    pleaseSelect: "Vui lòng chọn"
   },
   auth: {
     signIn: "Đăng nhập",
@@ -31,7 +33,7 @@ export default {
     login: "Đăng nhập",
     register: "Đăng ký",
     email: "Email",
-    user_name: "Tài khoản",
+    username: "Tài khoản",
     password: "Mật khẩu",
     confirmPassword: "Xác nhận mật khẩu",
     rememberMe: "Ghi nhớ đăng nhập",
@@ -39,16 +41,19 @@ export default {
     noAccount: "Chưa có tài khoản?",
     hasAccount: "Đã có tài khoản?",
     createAccount: "Tạo tài khoản",
-    loginSuccess: "Đăng nhập thành công!",
-    registerSuccess: "Đăng ký thành công!",
+    loginSuccess: "Đăng nhập thành công",
+    registerSuccess: "Đăng ký thành công",
+    loginFailed: "Đăng nhập thất bại. Vui lòng thử lại",
     fullName: "Họ và tên",
     agreeTerms: "Tôi đồng ý với Điều khoản dịch vụ và Chính sách bảo mật",
     emailPlaceholder: "admin@example.com",
     passwordPlaceholder: "Nhập mật khẩu của bạn",
     signUpSubtitle: "Đăng ký để bắt đầu",
+    signInSubtitle: "Đăng nhập để tiếp tục",
     namePlaceholder: "Nguyễn Văn A",
     createPasswordPlaceholder: "Tạo mật khẩu",
-    confirmPasswordPlaceholder: "Xác nhận mật khẩu của bạn"
+    confirmPasswordPlaceholder: "Xác nhận mật khẩu của bạn",
+    backToLogin: "Quay lại đăng nhập"
   },
   menu: {
     dashboard: "Bảng điều khiển",
@@ -206,7 +211,11 @@ export default {
   password: {
     changePassword: "Đổi mật khẩu",
     resetPassword: "Đặt lại mật khẩu",
+    resetPasswordSubtitle: "Nhập email của bạn và chúng tôi sẽ gửi cho bạn một link để đặt lại mật khẩu",
     createNewPassword: "Tạo mật khẩu mới",
+    createNewPasswordSubtitle: "Nhập mật khẩu mới và xác nhận mật khẩu",
+    noResetToken: "Không tìm thấy token reset. Vui lòng yêu cầu một link reset mật khẩu mới",
+    hasResetToken: "Liên kết đặt lại mật khẩu đã được xác thực. Vui lòng tạo mật khẩu mới của bạn bên dưới",
     currentPassword: "Mật khẩu hiện tại",
     newPassword: "Mật khẩu mới",
     confirmNewPassword: "Xác nhận mật khẩu mới",
@@ -219,7 +228,10 @@ export default {
     requirements: "Mật khẩu phải có ít nhất 6 ký tự",
     enterCurrent: "Nhập mật khẩu hiện tại",
     enterNew: "Nhập mật khẩu mới",
-    confirmNew: "Xác nhận mật khẩu mới"
+    confirmNew: "Xác nhận mật khẩu mới",
+    sendResetLink: "Gửi link đặt lại mật khẩu",
+    resetLinkSent: "Link đặt lại mật khẩu đã được gửi đến email của bạn",
+    resetLinkSentSubtitle: "Vui lòng kiểm tra email của bạn"
   },
   validation: {
     required: "Trường này là bắt buộc",

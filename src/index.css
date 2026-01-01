@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Custom design tokens for admin dashboard */
   --color-primary-50: #f0f9ff;
@@ -136,6 +138,6 @@ thead .ant-table-cell {
 }
 
 /* notification */
-.ant-notification-notice .title {
+.ant-notification-notice .title-only {
   @apply font-bold;
 }

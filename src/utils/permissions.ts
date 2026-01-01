@@ -34,6 +34,7 @@ export const hasActionPermission = (
   action: keyof ResourceAction = "showMenu",
   defaultIfMissing = DEFAULT_PERMISSION
 ): boolean => {
+  resource = resource?.replace("/", "");
   if (!resource) return defaultIfMissing;
 
   const rawPermissions = getUserPermissions();
@@ -60,6 +61,7 @@ export const hasActionPermission = (
  */
 export const getPermissionByResource = (resource?: string, defaultFullAccess = DEFAULT_PERMISSION): ResourceAction => {
   const fallback = defaultFullAccess ? fullAccess : noAccess;
+  resource = resource?.replace("/", "");
   if (!resource) return fallback;
 
   const rawPermissions = getUserPermissions();

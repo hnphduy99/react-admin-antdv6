@@ -18,9 +18,10 @@ interface UserFormModalProps {
 }
 
 export const UserFormModal = ({ t, open, editingItem, loading, form, onOk, onCancel }: UserFormModalProps) => {
+  const title = editingItem ? t("common.edit") : t("common.addNew") + " " + t("user.user");
   return (
     <Modal
-      title={editingItem ? `${t("common.edit")} ${t("user.user")}` : `${t("common.addNew")} ${t("user.user")}`}
+      title={title.toUpperCase()}
       open={open}
       onOk={onOk}
       onCancel={onCancel}

@@ -86,19 +86,15 @@ export const CreateNewPassword = () => {
     <Card className="shadow-xl">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold mb-2">{t("password.createNewPassword")}</h2>
-        <Text type="secondary">Enter your new password and confirm it to reset your password</Text>
+        <Text type="secondary">{t("password.createNewPasswordSubtitle")}</Text>
       </div>
       {token ? (
         <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded">
-          <p className="text-sm text-green-700 dark:text-green-400">
-            ✓ Password reset link verified. Please create your new password below.
-          </p>
+          <p className="text-sm text-green-700 dark:text-green-400">✓ {t("password.hasResetToken")}</p>
         </div>
       ) : (
         <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded">
-          <p className="text-sm text-yellow-700 dark:text-yellow-400">
-            ⚠ No reset token found. Please request a new password reset link.
-          </p>
+          <p className="text-sm text-yellow-700 dark:text-yellow-400">⚠ {t("password.noResetToken")}.</p>
         </div>
       )}
 
@@ -158,7 +154,7 @@ export const CreateNewPassword = () => {
 
         <div className="text-center mt-4">
           <Button type="link" onClick={() => navigate("/login")}>
-            Back to Login
+            {t("auth.backToLogin")}
           </Button>
         </div>
       </Form>

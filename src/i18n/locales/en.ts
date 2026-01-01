@@ -19,7 +19,9 @@ export default {
     addNew: "Add New",
     selectAll: "Select All",
     total: "Total {{count}} items",
-    exportExcel: "Export Excel"
+    exportExcel: "Export Excel",
+    pleaseInput: "Please input",
+    pleaseSelect: "Please select"
   },
   auth: {
     signIn: "Sign In",
@@ -28,6 +30,7 @@ export default {
     login: "Login",
     register: "Register",
     email: "Email",
+    username: "Username",
     password: "Password",
     confirmPassword: "Confirm Password",
     rememberMe: "Remember me",
@@ -35,16 +38,19 @@ export default {
     noAccount: "Don't have an account?",
     hasAccount: "Already have an account?",
     createAccount: "Create Account",
-    loginSuccess: "Login successful!",
-    registerSuccess: "Registration successful!",
+    loginSuccess: "Login successful",
+    registerSuccess: "Registration successful",
+    loginFailed: "Login failed. Please try again.",
     fullName: "Full Name",
     agreeTerms: "I agree to the Terms of Service and Privacy Policy",
     emailPlaceholder: "admin@example.com",
     passwordPlaceholder: "Enter your password",
     signUpSubtitle: "Sign up to get started",
+    signInSubtitle: "Sign in to your account to continue",
     namePlaceholder: "John Doe",
     createPasswordPlaceholder: "Create a password",
-    confirmPasswordPlaceholder: "Confirm your password"
+    confirmPasswordPlaceholder: "Confirm your password",
+    backToLogin: "Back to Login"
   },
   menu: {
     dashboard: "Dashboard",
@@ -191,7 +197,11 @@ export default {
   password: {
     changePassword: "Change Password",
     resetPassword: "Reset Password",
+    resetPasswordSubtitle: "Enter your email address and we'll send you a link to reset your password",
     createNewPassword: "Create New Password",
+    createNewPasswordSubtitle: "Enter your new password and confirm it",
+    noResetToken: "No reset token found. Please request a new password reset link.",
+    hasResetToken: "Password reset link verified. Please create your new password below",
     currentPassword: "Current Password",
     newPassword: "New Password",
     confirmNewPassword: "Confirm New Password",
@@ -204,7 +214,11 @@ export default {
     requirements: "Password must be at least 6 characters",
     enterCurrent: "Enter your current password",
     enterNew: "Enter new password",
-    confirmNew: "Confirm new password"
+    confirmNew: "Confirm new password",
+    sendResetLink: "Send Reset Link",
+    resetLinkSent: "Reset link sent to your email!",
+    resetLinkSentSubtitle:
+      "Please check your inbox and click the link to create a new password. The link will expire in 24 hours."
   },
   validation: {
     required: "This field is required",

@@ -22,7 +22,7 @@ const createNotificationConfig = (config: NotificationArgsProps, type: Notificat
   return {
     ...config,
     type,
-    title: <div className="title">{config.title}</div>
+    title: <div className={`title ${config.description ? "" : `title-only`}`}>{config.title}</div>
   };
 };
 

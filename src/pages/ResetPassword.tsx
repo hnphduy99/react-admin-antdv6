@@ -69,7 +69,7 @@ export const ResetPassword = () => {
     <Card className="shadow-xl">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold mb-2">{t("password.resetPassword")}</h2>
-        <Text type="secondary">Enter your email address and we'll send you a link to reset your password</Text>
+        <Text type="secondary">{t("password.resetPasswordSubtitle")}</Text>
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSendEmail}>
@@ -86,13 +86,13 @@ export const ResetPassword = () => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit" size="large" block loading={loading}>
-            Send Reset Link
+            {t("password.sendResetLink")}
           </Button>
         </Form.Item>
 
         <div className="text-center">
           <Button type="link" onClick={() => (window.location.href = "/login")}>
-            Back to Login
+            {t("auth.backToLogin")}
           </Button>
         </div>
       </Form>

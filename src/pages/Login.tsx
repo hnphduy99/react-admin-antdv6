@@ -35,20 +35,17 @@ export const Login = () => {
         dispatch(login(response.data));
 
         notification.success({
-          title: "Login successful!",
-          description: response.message || "Login successful!"
+          title: t("auth.loginSuccess")
         });
         navigate("/dashboard");
       } else {
         notification.error({
-          title: "Login failed!",
-          description: response.message || "Login failed. Please try again."
+          title: response.message || t("auth.loginFailed")
         });
       }
     } catch (error: any) {
       notification.error({
-        title: "Login failed!",
-        description: error.message || "Login failed. Please try again."
+        title: error.message || t("auth.loginFailed")
       });
     } finally {
       setLoading(false);
@@ -59,22 +56,22 @@ export const Login = () => {
     <Card className="shadow-xl">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold mb-2">{t("common.welcome")}</h2>
-        <Text type="secondary">Sign in to your account to continue</Text>
+        <Text type="secondary">{t("auth.signInSubtitle")}</Text>
       </div>
 
       <Form form={form} name="login" onFinish={handleLogin} layout="vertical" initialValues={{ remember: true }}>
         <Form.Item
           name="tai_khoan"
-          label={t("auth.user_name")}
-          rules={[{ required: true, message: `Please input your ${t("auth.user_name").toLowerCase()}` }]}
+          label={t("auth.username")}
+          rules={[{ required: true, message: `${t("common.pleaseInput")} ${t("auth.username").toLowerCase()}` }]}
         >
-          <Input prefix={<UserOutlined />} placeholder={t("auth.user_name")} size="large" />
+          <Input prefix={<UserOutlined />} placeholder={t("auth.username")} size="large" />
         </Form.Item>
 
         <Form.Item
           name="mat_khau"
           label={t("auth.password")}
-          rules={[{ required: true, message: `Please input your ${t("auth.password").toLowerCase()}` }]}
+          rules={[{ required: true, message: `${t("common.pleaseInput")} ${t("auth.password").toLowerCase()}` }]}
         >
           <Input.Password prefix={<LockOutlined />} placeholder={t("auth.password")} size="large" />
         </Form.Item>
@@ -82,25 +79,25 @@ export const Login = () => {
         <Form.Item>
           <div className="flex items-center justify-between">
             <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
+              <Checkbox>{t("auth.rememberMe")}</Checkbox>
             </Form.Item>
             <Link to="/reset-password" className="text-primary-600 hover:text-primary-700">
-              Forgot password?
+              {t("auth.forgotPassword")}
             </Link>
           </div>
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" size="large" block loading={loading}>
-            Sign In
+            {t("auth.signIn")}
           </Button>
         </Form.Item>
 
         <div className="text-center">
           <Text type="secondary">
-            Don't have an account?{" "}
+            {t("auth.noAccount")}{" "}
             <Link to="/register" className="text-primary-600 hover:text-primary-700 font-medium">
-              Sign up
+              {t("auth.signUp")}
             </Link>
           </Text>
         </div>
