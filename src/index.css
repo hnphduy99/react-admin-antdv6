@@ -138,8 +138,12 @@ thead .ant-table-cell {
 }
 
 /* notification */
-.ant-notification-notice .title-only {
+.ant-notification-notice .title {
   @apply font-bold;
+}
+
+.ant-notification-notice .title-only {
+  @apply font-normal;
 }
 
 /* loading */

@@ -8,6 +8,7 @@ export const RESOURCE = {
   RESET: "/auth/reset-password",
   DASHBOARD: "/dashboard",
   ROLE: "/roles",
+  PROFILE: "/profile",
   USER: "/users"
   /*new-api-path-here*/
 };

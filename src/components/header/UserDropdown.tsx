@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import { logout } from "@/store/slices/authSlice";
 import { useTranslation } from "react-i18next";
 import { authApi } from "@/apis/auth.api";
+import { getAvatarUrl } from "@/utils/utils";
 
 export const UserDropdown = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export const UserDropdown = () => {
   return (
     <Dropdown menu={{ items }} trigger={["click"]} placement="bottomRight">
       <Button type="text" size="large" className="flex items-center gap-2 h-auto px-2">
-        <Avatar size="large" icon={<UserOutlined />} alt="avatar" src={user?.avatar} />
+        <Avatar size="large" icon={<UserOutlined />} alt="avatar" src={getAvatarUrl(user?.avatar)} />
         <span className="hidden md:inline text-sm font-medium">{user?.ho_va_ten || "Admin User"}</span>
       </Button>
     </Dropdown>

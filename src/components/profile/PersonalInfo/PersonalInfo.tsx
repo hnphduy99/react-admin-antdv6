@@ -1,8 +1,11 @@
+import { profileApi } from "@/apis/profile.api";
 import { useAppSelector } from "@/hooks/useRedux";
+import type { IUser } from "@/interfaces/user.interface";
 import { useNotification } from "@/providers/NotificationProvider";
 import { MailOutlined, PhoneOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Col, DatePicker, Form, Input, Row, Select, Space } from "antd";
 import dayjs from "dayjs";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
@@ -13,12 +16,38 @@ const PersonalInfo = () => {
   const user = useAppSelector((state) => state.auth.user);
   const notification = useNotification();
 
-  const onFinish = (values: any) => {
-    console.log("Profile update:", values);
-    notification.success({
-      title: "Success",
-      description: "Profile updated successfully!"
-    });
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        const response = await profileApi.getProfile();
+        if (response.code === 200) {
+          form.setFieldsValue(response.data);
+        }
+      } catch (error) {
+        console.error("Get profile error:", error);
+      }
+    };
+    getProfile();
+  }, [form]);
+
+  const onFinish = async (values: IUser) => {
+    try {
+      const response = await profileApi.updateProfile(values);
+      if (response.code === 200) {
+        notification.success({
+          title: t("common.success"),
+          description: t("common.updateSuccess")
+        });
+        form.setFieldsValue(response.data);
+      } else {
+        notification.error({
+          title: t("common.error"),
+          description: Array.isArray(response?.data) ? response.data.join(", ") : `Failed to update profile`
+        });
+      }
+    } catch (error) {
+      console.error("Update profile error:", error);
+    }
   };
 
   return (

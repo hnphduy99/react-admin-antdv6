@@ -1,11 +1,13 @@
+import { profileApi } from "@/apis/profile.api";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import { useNotification } from "@/providers/NotificationProvider";
 import { updateUser } from "@/store/slices/authSlice";
-import { checkBeforeUpload, getBase64 } from "@/utils/utils";
+import { checkBeforeUpload, getAvatarUrl, getBase64 } from "@/utils/utils";
 import { UploadOutlined, UserOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { Avatar, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
+import type { RcFile } from "antd/lib/upload";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -14,7 +16,7 @@ const ProfileInfo = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const notification = useNotification();
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(user?.avatar);
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(getAvatarUrl(user?.avatar));
   const [uploading, setUploading] = useState(false);
 
   const handleUploadAvatar = async (file: File) => {
@@ -22,23 +24,21 @@ const ProfileInfo = () => {
       setUploading(true);
 
       const formData = new FormData();
-      formData.append("file", file);
-
-      // const response = await userApi.updateAvatar(formData);
-
-      const base64 = await getBase64(file);
-      dispatch(updateUser({ avatar: base64 }));
-      setAvatarUrl(base64);
-
-      notification.success({
-        title: "Success",
-        description: "Cập nhật ảnh đại diện thành công"
-      });
-    } catch (error) {
-      console.error("Upload avatar error:", error);
+      formData.append("file", file as RcFile);
+      const response = await profileApi.updateAvatar(formData);
+      if (response.code === 200) {
+        dispatch(updateUser({ avatar: response.data.avatar }));
+        const base64 = await getBase64(file);
+        setAvatarUrl(base64);
+        notification.success({
+          title: t("common.success"),
+          description: t("common.updateSuccess")
+        });
+      }
+    } catch (error: any) {
       notification.error({
-        title: "Error",
-        description: "Có lỗi xảy ra khi cập nhật ảnh đại diện"
+        title: t("common.error"),
+        description: error?.message || t("common.updateFailed")
       });
     } finally {
       setUploading(false);
@@ -54,10 +54,6 @@ const ProfileInfo = () => {
       if (result === false) {
         const preview = await getBase64(file);
         setAvatarUrl(preview);
-        notification.success({
-          title: "Success",
-          description: `${file.name} đã được xử lý`
-        });
         handleUploadAvatar(file);
       }
       return result;

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/constants/constants";
 import type { NotificationContextType } from "@/providers/NotificationProvider";
 import { Upload, type InputNumberProps } from "antd";
 import type { RcFile } from "antd/lib/upload";
@@ -57,3 +58,5 @@ export const getBase64 = (file: File): Promise<string> =>
 export const getDateValueProps = (i: string | dayjs.Dayjs | null) => ({ value: i ? dayjs(i, "YYYY-MM-DD") : null });
 
 export const getDateValueFromEvent = (i: string | dayjs.Dayjs | null) => (i ? dayjs(i).format("YYYY-MM-DD") : null);
+
+export const getAvatarUrl = (avatar: string | undefined) => API_BASE_URL + avatar?.replace("public", "");

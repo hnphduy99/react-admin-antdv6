@@ -24,7 +24,11 @@ export default {
     total: "Tổng cộng {{count}} mục",
     exportExcel: "Xuất Excel",
     pleaseInput: "Vui lòng nhập",
-    pleaseSelect: "Vui lòng chọn"
+    pleaseSelect: "Vui lòng chọn",
+    success: "Thành công",
+    error: "Lỗi",
+    updateSuccess: "Cập nhật thành công",
+    updateFailed: "Cập nhật thất bại"
   },
   auth: {
     signIn: "Đăng nhập",
@@ -250,6 +254,7 @@ export default {
     pageNotFound: "Xin lỗi, trang bạn truy cập không tồn tại.",
     backHome: "Về trang chủ",
     backToDashboard: "Về trang chủ",
+    updateAvatarError: "Có lỗi xảy ra khi cập nhật ảnh đại diện",
     404: "404"
   }
 };
