@@ -235,7 +235,10 @@ export default {
     confirmNew: "Xác nhận mật khẩu mới",
     sendResetLink: "Gửi link đặt lại mật khẩu",
     resetLinkSent: "Link đặt lại mật khẩu đã được gửi đến email của bạn",
-    resetLinkSentSubtitle: "Vui lòng kiểm tra email của bạn"
+    resetLinkSentSubtitle: "Vui lòng kiểm tra email của bạn",
+    firstLoginTitle: "Đổi mật khẩu lần đầu",
+    firstLoginSubtitle: "Để đảm bảo an toàn, vui lòng đổi mật khẩu trước khi tiếp tục sử dụng hệ thống.",
+    updateAndContinue: "Cập nhật và Tiếp tục"
   },
   validation: {
     required: "Trường này là bắt buộc",

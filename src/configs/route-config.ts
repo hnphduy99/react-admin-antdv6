@@ -12,6 +12,7 @@ export const ROUTE = {
   USER: "/user",
   PROFILE: "/profile",
   PERSONAL_INFO: "/personal-info",
-  NOT_FOUND: "/404"
+  NOT_FOUND: "/404",
+  FIRST_LOGIN: "/first-login"
   /*new-route-path-here*/
 };

@@ -23,6 +23,7 @@ const ChangePasswordPage = lazy(() => import("@/pages/ChangePasswordPage"));
 const SettingsPage = lazy(() => import("@/pages/Settings"));
 const NotificationPageContent = lazy(() => import("@/pages/ui/NotificationPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFound"));
+const FirstLoginPage = lazy(() => import("@/components/auth/FirstLogin/FirstLogin"));
 /*import-component-here*/
 
 const Dashboard = withLoading(DashboardPage);
@@ -38,14 +39,19 @@ const ChangePassword = withLoading(ChangePasswordPage);
 const Settings = withLoading(SettingsPage);
 const NotificationPage = withLoading(NotificationPageContent);
 const NotFound = withLoading(NotFoundPage);
+const FirstLogin = withLoading(FirstLoginPage);
 /*import-component-with-loading-here*/
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   if (!isAuthenticated) {
     return <Navigate to={ROUTE.LOGIN} replace />;
+  }
+
+  if (user?.need_change_password === 1 && window.location.pathname !== ROUTE.FIRST_LOGIN) {
+    return <Navigate to={ROUTE.FIRST_LOGIN} replace />;
   }
 
   return <>{children}</>;
@@ -97,6 +103,14 @@ export const AppRoutes = () => {
           <Route path={ROUTE.REGISTER} element={<Register />} />
           <Route path={ROUTE.RESET_PASSWORD} element={<ResetPassword />} />
           <Route path={ROUTE.CREATE_PASSWORD + "/:token"} element={<CreateNewPassword />} />
+          <Route
+            path={ROUTE.FIRST_LOGIN}
+            element={
+              <ProtectedRoute>
+                <FirstLogin />
+              </ProtectedRoute>
+            }
+          />
         </Route>
 
         {/* Protected routes with MainLayout */}

@@ -218,7 +218,10 @@ export default {
     sendResetLink: "Send Reset Link",
     resetLinkSent: "Reset link sent to your email!",
     resetLinkSentSubtitle:
-      "Please check your inbox and click the link to create a new password. The link will expire in 24 hours."
+      "Please check your inbox and click the link to create a new password. The link will expire in 24 hours.",
+    firstLoginTitle: "First Login Security",
+    firstLoginSubtitle: "For your security, please change your password before continuing.",
+    updateAndContinue: "Update and Continue"
   },
   validation: {
     required: "This field is required",
