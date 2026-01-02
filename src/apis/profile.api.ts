@@ -12,6 +12,18 @@ export const profileApi = {
     const response = await axiosInstance.patch<ApiResponse<IUser>>(RESOURCE.PROFILE, data);
     return response.data;
   },
+  changePassword: async (
+    mat_khau_hien_tai: string,
+    mat_khau_moi: string,
+    mat_khau_moi_xac_nhan: string
+  ): Promise<ApiResponse> => {
+    const response = await axiosInstance.patch<ApiResponse>(RESOURCE.CHANGE_PASSWORD, {
+      mat_khau_hien_tai,
+      mat_khau_moi,
+      mat_khau_moi_xac_nhan
+    });
+    return response.data;
+  },
   updateAvatar: async (formData: FormData) => {
     const response = await axiosInstance.patch<ApiResponse<IUser>>(`${RESOURCE.PROFILE}/avatar`, formData, {
       headers: {

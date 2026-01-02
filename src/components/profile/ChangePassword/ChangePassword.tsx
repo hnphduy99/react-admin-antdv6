@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Card, Form, Input, Button, message, Progress } from "antd";
+import { Card, Form, Input, Button, Progress } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { profileApi } from "@/apis/profile.api";
+import { useNotification } from "@/providers/NotificationProvider";
 
 export const ChangePassword = () => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const notification = useNotification();
 
   const calculatePasswordStrength = (password: string): number => {
     let strength = 0;
@@ -35,22 +38,44 @@ export const ChangePassword = () => {
     setPasswordStrength(calculatePasswordStrength(password));
   };
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     console.log("Change password:", values);
-    message.success(t("password.passwordChanged"));
-    form.resetFields();
-    setPasswordStrength(0);
+    try {
+      const response = await profileApi.changePassword(
+        values.currentPassword,
+        values.newPassword,
+        values.confirmPassword
+      );
+      if (response.data === 200) {
+        notification.success({
+          title: t("common.success"),
+          description: t("password.passwordChanged")
+        });
+        form.resetFields();
+        setPasswordStrength(0);
+      } else {
+        notification.error({
+          title: t("common.error"),
+          description: Array.isArray(response?.data) ? response.data.join(", ") : response.message
+        });
+      }
+    } catch (error: any) {
+      notification.error({
+        title: t("common.error"),
+        description: error?.message || t("common.updateFailed")
+      });
+    }
   };
 
   return (
     <Card title={t("password.changePassword")} className="shadow-sm">
-      <Form form={form} layout="vertical" onFinish={onFinish} requiredMark={false}>
+      <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
           label={t("password.currentPassword")}
           name="currentPassword"
           rules={[{ required: true, message: t("validation.passwordRequired") }]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder={t("password.enterCurrent")} size="large" />
+          <Input.Password prefix={<LockOutlined />} placeholder={t("password.enterCurrent")} />
         </Form.Item>
 
         <Form.Item
@@ -64,7 +89,6 @@ export const ChangePassword = () => {
           <Input.Password
             prefix={<LockOutlined />}
             placeholder={t("password.enterNew")}
-            size="large"
             onChange={handlePasswordChange}
           />
         </Form.Item>
@@ -97,17 +121,15 @@ export const ChangePassword = () => {
             })
           ]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder={t("password.confirmNew")} size="large" />
+          <Input.Password prefix={<LockOutlined />} placeholder={t("password.confirmNew")} />
         </Form.Item>
 
         <Form.Item>
-          <div className="flex gap-3">
-            <Button type="primary" htmlType="submit" size="large">
+          <div className="flex gap-3 mt-2">
+            <Button type="primary" htmlType="submit">
               {t("password.changePassword")}
             </Button>
-            <Button onClick={() => form.resetFields()} size="large">
-              {t("common.cancel")}
-            </Button>
+            <Button htmlType="reset">{t("common.reset")}</Button>
           </div>
         </Form.Item>
       </Form>

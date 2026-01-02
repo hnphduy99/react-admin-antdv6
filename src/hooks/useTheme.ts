@@ -67,8 +67,7 @@ export const useTheme = () => {
           colorIcon: themeMode === "dark" ? "#fff" : "#000"
         },
         Form: {
-          verticalLabelPadding: 0,
-          itemMarginBottom: 20
+          verticalLabelPadding: 0
         }
       }
     }),

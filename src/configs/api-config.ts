@@ -9,6 +9,7 @@ export const RESOURCE = {
   DASHBOARD: "/dashboard",
   ROLE: "/roles",
   PROFILE: "/profile",
+  CHANGE_PASSWORD: "/profile/change-password",
   USER: "/users"
   /*new-api-path-here*/
 };

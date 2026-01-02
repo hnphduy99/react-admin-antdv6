@@ -45,8 +45,11 @@ const PersonalInfo = () => {
           description: Array.isArray(response?.data) ? response.data.join(", ") : `Failed to update profile`
         });
       }
-    } catch (error) {
-      console.error("Update profile error:", error);
+    } catch (error: any) {
+      notification.error({
+        title: t("common.error"),
+        description: error?.message || t("common.updateFailed")
+      });
     }
   };
 
