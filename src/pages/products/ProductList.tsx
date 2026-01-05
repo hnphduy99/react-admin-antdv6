@@ -10,7 +10,6 @@ import { AppstoreOutlined, DollarOutlined, InboxOutlined, PlusOutlined } from "@
 import { Button, Card, Col, Row, Space, Statistic } from "antd";
 import { useTranslation } from "react-i18next";
 import { createProductColumns } from "./productColumns";
-import { ProductFormModal } from "./ProductFormModal";
 
 export const ProductList = () => {
   const { t } = useTranslation();
@@ -26,9 +25,6 @@ export const ProductList = () => {
   const {
     data,
     loading,
-    isModalOpen,
-    editingItem,
-    form,
     pagination,
     handleColumnSearch,
     handleBulkColumnSearch,
@@ -36,18 +32,15 @@ export const ProductList = () => {
     handleEdit,
     handleDelete,
     handleView,
-    handleTableChange,
-    handleModalOk,
-    handleModalCancel
+    handleTableChange
   } = useCrudManagement<IProduct>({
     apiService: {
       getAll: productApi.getProductList,
-      getById: productApi.getProductById,
-      create: productApi.createProduct,
-      update: productApi.updateProduct,
       delete: productApi.deleteProduct
     },
-    entityName: "Product"
+    entityName: "Product",
+    mode: "page",
+    basePath: "/products"
   });
 
   const columns = createProductColumns(t, handleView, handleEdit, handleDelete, handleColumnSearch, pagination, {
@@ -133,15 +126,6 @@ export const ProductList = () => {
           )}
         </Card>
       </div>
-
-      <ProductFormModal
-        open={isModalOpen}
-        editingProduct={editingItem}
-        loading={loading}
-        form={form}
-        onOk={handleModalOk}
-        onCancel={handleModalCancel}
-      />
     </>
   );
 };

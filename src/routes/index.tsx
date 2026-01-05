@@ -19,6 +19,7 @@ const FormExamplePage = lazy(() => import("@/pages/FormExample"));
 const PersonalInfoPage = lazy(() => import("@/pages/PersonalInfoPage"));
 const ProductListPage = lazy(() => import("@/pages/products/ProductList"));
 const UserListPage = lazy(() => import("@/pages/users/UserList"));
+const ProductFormPage = lazy(() => import("@/pages/products/ProductFormPage"));
 const ChangePasswordPage = lazy(() => import("@/pages/ChangePasswordPage"));
 const SettingsPage = lazy(() => import("@/pages/Settings"));
 const NotificationPageContent = lazy(() => import("@/pages/ui/NotificationPage"));
@@ -35,6 +36,7 @@ const FormExample = withLoading(FormExamplePage);
 const PersonalInfo = withLoading(PersonalInfoPage);
 const ProductList = withLoading(ProductListPage);
 const UserList = withLoading(UserListPage);
+const ProductForm = withLoading(ProductFormPage);
 const ChangePassword = withLoading(ChangePasswordPage);
 const Settings = withLoading(SettingsPage);
 const NotificationPage = withLoading(NotificationPageContent);
@@ -127,14 +129,32 @@ export const AppRoutes = () => {
             <Route path={`${ROUTE.PROFILE}/${ROUTE.PERSONAL_INFO}`} element={<PersonalInfo />} />
             <Route path={`${ROUTE.PROFILE}/${ROUTE.CHANGE_PASSWORD}`} element={<ChangePassword />} />
           </Route>
-          <Route
-            path="/products"
-            element={
-              <PermissionRoute permissionKey="products">
-                <ProductList />
-              </PermissionRoute>
-            }
-          />
+          <Route path="/products">
+            <Route
+              index
+              element={
+                <PermissionRoute permissionKey="products">
+                  <ProductList />
+                </PermissionRoute>
+              }
+            />
+            <Route
+              path="create"
+              element={
+                <PermissionRoute permissionKey="products" action="create">
+                  <ProductForm />
+                </PermissionRoute>
+              }
+            />
+            <Route
+              path="edit/:id"
+              element={
+                <PermissionRoute permissionKey="products" action="edit">
+                  <ProductForm />
+                </PermissionRoute>
+              }
+            />
+          </Route>
           <Route
             path={ROUTE.USER}
             element={

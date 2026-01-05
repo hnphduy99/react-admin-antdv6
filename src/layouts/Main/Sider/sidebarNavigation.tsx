@@ -103,13 +103,12 @@ export const sidebarNavigation: MenuItemData[] = [
     key: "products",
     icon: <ProductOutlined />,
     label: "menu.products",
-    path: "/products",
     children: [
       {
         key: "products",
         permissionKey: "products",
         label: "menu.productList",
-        path: "/products/list",
+        path: "/products",
         icon: null
       }
     ]

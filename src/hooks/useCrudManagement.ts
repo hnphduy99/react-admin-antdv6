@@ -6,6 +6,7 @@ import { useNotification } from "@/providers/NotificationProvider";
 import type { SearchOperator } from "@/types/searchOperator";
 import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface ColumnSearchItem {
   field: string;
@@ -14,21 +15,23 @@ export interface ColumnSearchItem {
 }
 
 interface CrudApiService<T> {
-  getAll: (
+  getAll?: (
     page: number,
     limit: number,
     columnSearches?: ColumnSearchItem[]
   ) => Promise<ApiResponse<PaginatedResponse<T>>>;
-  getById: (id: string | number) => Promise<ApiResponse<T>>;
-  create: (data: T) => Promise<ApiResponse<T>>;
-  update: (id: string | number, data: T) => Promise<ApiResponse<T>>;
-  delete: (id: string | number) => Promise<ApiResponse<T>>;
+  getById?: (id: string | number) => Promise<ApiResponse<T>>;
+  create?: (data: T) => Promise<ApiResponse<T>>;
+  update?: (id: string | number, data: T) => Promise<ApiResponse<T>>;
+  delete?: (id: string | number) => Promise<ApiResponse<T>>;
 }
 
 interface CrudConfig<T> {
   apiService: CrudApiService<T>;
   entityName: string;
   onView?: (item: T) => void;
+  mode?: "modal" | "page";
+  basePath?: string;
 }
 
 export interface PaginationConfig {
@@ -44,7 +47,9 @@ export interface PaginationConfig {
  * @example
  * const userCrud = useCrudManagement({
  *   apiService: mockApi.user,
- *   entityName: "User"
+ *   entityName: "User",
+ *   mode: "page",
+ *   basePath: "/users"
  * });
  */
 export const useCrudManagement = <T extends { id: string | number }>(config: CrudConfig<T>) => {
@@ -60,20 +65,24 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
     total: 0
   });
   const notification = useNotification();
+  const navigate = useNavigate();
 
-  const { apiService, entityName, onView } = useMemo(
+  const { apiService, entityName, onView, mode, basePath } = useMemo(
     () => ({
       apiService: config.apiService,
       entityName: config.entityName,
-      onView: config.onView
+      onView: config.onView,
+      mode: config.mode || "modal",
+      basePath: config.basePath
     }),
-    [config.apiService, config.entityName, config.onView]
+    [config.apiService, config.entityName, config.onView, config.mode, config.basePath]
   );
 
   // Fetch data from API
   const fetchData = useCallback(
     async (page = 1, limit = PER_PAGE, colSearches: ColumnSearchItem[] = []) => {
       try {
+        if (!apiService.getAll) return;
         setLoading(true);
         const response = await apiService.getAll(page, limit, colSearches);
         const isSuccess = response?.code === 200;
@@ -153,12 +162,23 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
   };
 
   const handleAdd = () => {
+    if (mode === "page" && basePath) {
+      navigate(`${basePath}/create`);
+      return;
+    }
     setEditingItem(null);
     form.resetFields();
     setIsModalOpen(true);
   };
 
   const handleEdit = async (id: string | number) => {
+    if (mode === "page" && basePath) {
+      navigate(`${basePath}/edit/${id}`);
+      return;
+    }
+
+    if (!apiService.getById) return;
+
     try {
       setLoading(true);
       const response = await apiService.getById(id);
@@ -177,6 +197,8 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
 
   // Handle delete
   const handleDelete = async (id: string | number) => {
+    if (!apiService.delete) return;
+
     try {
       setLoading(true);
       const response = await apiService.delete(id);
@@ -201,7 +223,15 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
       const values = await form.validateFields();
       setLoading(true);
 
-      const response = editingItem ? await apiService.update(editingItem.id, values) : await apiService.create(values);
+      const method = editingItem ? apiService.update : apiService.create;
+      if (!method) {
+        setLoading(false);
+        return;
+      }
+
+      const response = editingItem
+        ? await apiService.update!(editingItem.id, values)
+        : await apiService.create!(values);
 
       const isSuccess = response?.code === 200;
 
@@ -220,8 +250,12 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
 
       if (!isSuccess) return;
 
-      setIsModalOpen(false);
-      form.resetFields();
+      if (mode === "page" && basePath) {
+        navigate(basePath);
+      } else {
+        setIsModalOpen(false);
+        form.resetFields();
+      }
       await fetchData(pagination.current, pagination.limit, columnSearches);
     } catch (error: any) {
       notification.error({
@@ -243,9 +277,15 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
   const handleView = (record: T) => {
     if (onView) {
       onView(record);
-    } else {
-      notification.info({ title: "Info", description: `View ${entityName}: ${(record as any).name || record.id}` });
+      return;
     }
+
+    if (mode === "page" && basePath) {
+      navigate(`${basePath}/${record.id}`);
+      return;
+    }
+
+    notification.info({ title: "Info", description: `View ${entityName}: ${(record as any).name || record.id}` });
   };
 
   return {
