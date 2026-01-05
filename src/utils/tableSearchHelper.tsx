@@ -1,50 +1,83 @@
 import {
   ActionFilter,
   AsyncSelectFilter,
-  DateTimeFilter,
   DateTimeFilterAdvanced,
   InputFilter,
   NumberRangeFilter,
-  NumberRangeFilterAdvanced,
   SelectFilter
 } from "@/components/filters";
-import type { ColumnSearchValue, SearchDisplayMode, TopSearchConfig } from "@/interfaces/searchTable.interface";
+import type {
+  ColumnSearchType,
+  ColumnSearchValue,
+  SearchDisplayMode,
+  TopSearchConfig
+} from "@/interfaces/searchTable.interface";
 import type { SearchOperator } from "@/types/searchOperator";
-import { SearchOutlined } from "@ant-design/icons";
+import SearchOutlined from "@ant-design/icons/lib/icons/SearchOutlined";
 import Card from "antd/es/card";
 import Flex from "antd/es/flex";
-import type { ColumnType } from "antd/es/table";
-import type { FilterConfirmProps } from "antd/es/table/interface";
+import type { FilterConfirmProps, FilterDropdownProps } from "antd/es/table/interface";
 
-interface BaseParams<T> {
+//TODO: cần tìm kiếm dữ liệu trên bảng
+interface IBaseFilterParams<T> {
   dataIndex: keyof T | string;
-  placeholder?: string;
+  placeholder?: string | string[];
+  operator: SearchOperator;
+  showSearch: SearchDisplayMode;
   onSearch: (value: ColumnSearchValue | null, dataIndex: string) => void;
-  operator?: SearchOperator;
-  showSearch?: SearchDisplayMode;
-  filterComponent?: React.ElementType;
-  filterProps?: any;
-  topConfig?: Omit<TopSearchConfig, "dataIndex">;
-  handlers?: ReturnType<typeof createHandlers>;
 }
 
-function createHandlers(dataIndex: string, onSearch: BaseParams<any>["onSearch"], defaultOperator: SearchOperator) {
-  return {
-    onSearch(confirm: (p?: FilterConfirmProps) => void, value: any, operator?: SearchOperator) {
-      confirm();
-      if (!value || (typeof value === "object" && !value.value)) {
-        onSearch(null, dataIndex);
-        return;
+type ICommonFilterParams<T> = IBaseFilterParams<T> &
+  (
+    | {
+        typeSearch: "asyncSelect";
+        fetchData: () => Promise<Array<{ label: string; value: any }>>;
+        options?: Array<{ label: string; value: string | number }>;
       }
-      onSearch({ value, operator: operator ?? defaultOperator }, dataIndex);
+    | {
+        typeSearch: "select";
+        options: Array<{ label: string; value: string | number }>;
+        fetchData?: () => Promise<Array<{ label: string; value: any }>>;
+      }
+    | {
+        typeSearch: Exclude<ColumnSearchType, "asyncSelect" | "select">;
+      }
+  );
+
+/**
+ * Tạo các handler cho filter
+ * @param dataIndex Cột cần filter
+ * @param onSearch Hàm callback khi filter thay đổi
+ * @param defaultOperator Operator mặc định
+ */
+const createHandlers = (
+  dataIndex: string,
+  onSearch: (value: ColumnSearchValue | null, dataIndex: string) => void,
+  defaultOperator: SearchOperator = "contain"
+) => {
+  return {
+    onSearch: (confirm: (p?: FilterConfirmProps) => void, value: any, operator?: SearchOperator) => {
+      confirm();
+      if (!value || value === "" || (typeof value === "object" && !value.value)) {
+        onSearch(null, dataIndex);
+      } else {
+        onSearch(
+          {
+            value: value,
+            operator: operator || defaultOperator
+          },
+          dataIndex
+        );
+      }
     },
-    onReset(confirm: any, setSelectedKeys: any) {
+
+    onReset: (confirm: (p?: FilterConfirmProps) => void, setSelectedKeys: (k: React.Key[]) => void) => {
       setSelectedKeys([]);
       confirm({ closeDropdown: false });
       onSearch(null, dataIndex);
     }
   };
-}
+};
 
 /**
  * Hàm dùng chung để tạo filterDropdown
@@ -52,19 +85,19 @@ function createHandlers(dataIndex: string, onSearch: BaseParams<any>["onSearch"]
  * @param props Props của component filter
  * @param handlers Handlers của filter
  */
-function renderFilterDropdown(
+const renderFilterDropdown = (
   FilterComponent: React.ElementType,
   props: Record<string, any>,
   handlers: ReturnType<typeof createHandlers>
-) {
-  return ({ setSelectedKeys, selectedKeys, confirm, close }: any) => {
+) => {
+  return ({ setSelectedKeys, selectedKeys, confirm, close }: FilterDropdownProps & { selectedKeys: any }) => {
     const data = Array.isArray(selectedKeys) ? selectedKeys[0] : selectedKeys;
 
     const handleSearch = () => {
       let value = data;
       let operator = props.operator;
 
-      // Nếu dữ liệu là object (như trong Advanced Filter), tách value và operator/condition
+      // Nếu dữ liệu là object, tách value và operator/condition
       if (data && typeof data === "object" && !Array.isArray(data)) {
         value = data.value;
         operator = data.operator || data.condition || operator;
@@ -94,129 +127,51 @@ function renderFilterDropdown(
       </Card>
     );
   };
-}
+};
 
-export function createColumnSearch<T>(params: BaseParams<T>): ColumnType<T> & { searchConfig?: TopSearchConfig } {
-  const {
-    dataIndex,
-    onSearch,
-    operator = "contain",
-    showSearch = "column",
-    filterComponent,
-    filterProps,
-    topConfig,
-    handlers: handlersParam
-  } = params;
+/**
+ * Tạo column search
+ * @param params tham số
+ * @returns
+ */
+export function createColumnSearch<T>(params: ICommonFilterParams<T>) {
+  const { dataIndex, onSearch, operator, showSearch, typeSearch } = params;
 
   const key = String(dataIndex);
-  const handlers = handlersParam || createHandlers(key, onSearch, operator);
+  const handlers = createHandlers(key, onSearch, operator);
 
   const isColumn = showSearch !== "top";
   const isTop = showSearch !== "column";
 
+  const getFilterComponent = () => {
+    switch (typeSearch) {
+      case "input":
+        return InputFilter;
+      case "select":
+        return SelectFilter;
+      case "asyncSelect":
+        return AsyncSelectFilter;
+      case "numberRange":
+        return NumberRangeFilter;
+      // case "dateRange":
+      //   return DateTimeFilter;
+      case "dateRange":
+        return DateTimeFilterAdvanced;
+      default:
+        return InputFilter;
+    }
+  };
+
   return {
-    ...(isColumn &&
-      filterComponent && {
-        filterDropdown: renderFilterDropdown(filterComponent, filterProps, handlers),
-        filterIcon: () => <SearchOutlined />
-      }),
-    ...(isTop &&
-      topConfig && {
-        searchConfig: { dataIndex: key, operator, ...topConfig }
-      })
+    ...(isColumn && {
+      filterDropdown: renderFilterDropdown(getFilterComponent(), params, handlers),
+      filterIcon: () => <SearchOutlined />
+    }),
+    ...(isTop && {
+      searchConfig: { type: typeSearch, ...params }
+    })
   };
 }
-
-export const getColumnInputSearch = <T extends Record<string, any>>(params: BaseParams<T>) => {
-  return createColumnSearch({
-    ...params,
-    filterComponent: InputFilter,
-    filterProps: { placeholder: params.placeholder },
-    topConfig: { type: "input", ...params }
-  });
-};
-
-export const getColumnSelectSearch = <T extends Record<string, any>>(
-  params: BaseParams<T> & { options: Array<{ label: string; value: string | number }> }
-) => {
-  return createColumnSearch({
-    ...params,
-    filterComponent: SelectFilter,
-    filterProps: { placeholder: params.placeholder },
-    topConfig: { type: "select", ...params }
-  });
-};
-
-export const getColumnAsyncSelectSearch = <T extends Record<string, any>>(
-  params: BaseParams<T> & { fetchData: (keyword: string) => Promise<Array<{ label: string; value: any }>> }
-) => {
-  return createColumnSearch({
-    ...params,
-    filterComponent: AsyncSelectFilter,
-    filterProps: { fetchOptions: params.fetchData, placeholder: params.placeholder },
-    topConfig: { type: "asyncSelect", ...params }
-  });
-};
-
-/**
- * Helper nội bộ để tạo tìm kiếm theo khoảng (Date hoặc Number)
- */
-const createRangeColumnSearch = <T extends Record<string, any>>(
-  params: BaseParams<T> & {
-    mode?: "single" | "range";
-    filterComponent: React.ElementType;
-    type?: TopSearchConfig["type"];
-  }
-) => {
-  const { mode = "range", filterComponent, type, ...rest } = params;
-  const isRange = mode === "range";
-  const defaultOperator = isRange ? "between" : "equal";
-
-  return createColumnSearch({
-    operator: params.operator || defaultOperator,
-    ...rest,
-    filterComponent,
-    filterProps: { mode, placeholder: params.placeholder },
-    topConfig: {
-      type: type || (isRange ? "dateRange" : "date"),
-      ...params
-    }
-  });
-};
-
-export const getColumnDateTimeSearch = <T extends Record<string, any>>(
-  params: BaseParams<T> & { mode?: "single" | "range" }
-) => {
-  return createRangeColumnSearch({
-    ...params,
-    filterComponent: DateTimeFilter
-  });
-};
-
-export const getColumnDateTimeAdvancedSearch = <T extends Record<string, any>>(
-  params: BaseParams<T> & { mode?: "single" | "range" }
-) => {
-  return createRangeColumnSearch({
-    ...params,
-    filterComponent: DateTimeFilterAdvanced
-  });
-};
-
-export const getColumnNumberRangeSearch = <T extends Record<string, any>>(params: BaseParams<T>) => {
-  return createRangeColumnSearch({
-    ...params,
-    filterComponent: NumberRangeFilter,
-    type: "numberRange"
-  });
-};
-
-export const getColumnNumberRangeAdvancedSearch = <T extends Record<string, any>>(params: BaseParams<T>) => {
-  return createRangeColumnSearch({
-    ...params,
-    filterComponent: NumberRangeFilterAdvanced,
-    type: "numberRange"
-  });
-};
 
 /**
  * Helper để lấy tất cả top search configs từ danh sách columns

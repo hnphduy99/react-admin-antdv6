@@ -6,9 +6,11 @@ export interface ColumnSearchValue {
   operator: SearchOperator;
 }
 
+export type ColumnSearchType = "input" | "select" | "asyncSelect" | "number" | "numberRange" | "date" | "dateRange";
+
 export interface TopSearchConfig {
   dataIndex: string;
-  type: "input" | "number" | "select" | "date" | "dateRange" | "asyncSelect" | "numberRange";
+  type: ColumnSearchType;
   placeholder?: string;
   options?: Array<{ label: string; value: string | number }>;
   operator?: SearchOperator;

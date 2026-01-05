@@ -1,7 +1,7 @@
 import type { PaginationConfig } from "@/hooks/useCrudManagement";
 import type { IProduct } from "@/interfaces/product.interface";
 import type { ColumnSearchValue } from "@/interfaces/searchTable.interface";
-import { getColumnDateTimeSearch, getColumnInputSearch, getColumnNumberRangeSearch } from "@/utils/tableSearchHelper";
+import { createColumnSearch } from "@/utils/tableSearchHelper";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
@@ -43,12 +43,13 @@ export const createProductColumns = (
     title: t("product.productName"),
     dataIndex: "name",
     key: "name",
-    ...getColumnInputSearch<IProduct>({
+    ...createColumnSearch<IProduct>({
       dataIndex: "name",
       placeholder: t("product.searchProduct"),
       onSearch: handleColumnSearch,
       operator: "contain",
-      showSearch: "both"
+      showSearch: "both",
+      typeSearch: "input"
     }),
     render: (name) => <span className="font-medium">{name}</span>
   },
@@ -56,11 +57,12 @@ export const createProductColumns = (
     title: t("product.price"),
     dataIndex: "price",
     key: "price",
-    ...getColumnNumberRangeSearch<IProduct>({
+    ...createColumnSearch<IProduct>({
       dataIndex: "price",
       onSearch: handleColumnSearch,
       operator: "between",
-      showSearch: "top"
+      showSearch: "top",
+      typeSearch: "numberRange"
     }),
     render: (price) => price.toFixed(2),
     align: "right",
@@ -108,13 +110,13 @@ export const createProductColumns = (
     title: t("product.created"),
     dataIndex: "createdAt",
     key: "createdAt",
-    ...getColumnDateTimeSearch<IProduct>({
+    ...createColumnSearch<IProduct>({
       dataIndex: "createdAt",
       placeholder: "Ngày tạo",
-      mode: "single",
       onSearch: handleColumnSearch,
       operator: "equal",
-      showSearch: "top"
+      showSearch: "top",
+      typeSearch: "dateRange"
     }),
     align: "right",
     render: (createdAt) => dayjs(createdAt).format("DD/MM/YYYY"),

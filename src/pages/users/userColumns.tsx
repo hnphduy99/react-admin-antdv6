@@ -2,12 +2,7 @@ import { optionsApi } from "@/apis/options.api";
 import type { PaginationConfig } from "@/hooks/useCrudManagement";
 import type { ColumnSearchValue } from "@/interfaces/searchTable.interface";
 import type { IUser } from "@/interfaces/user.interface";
-import {
-  getColumnAsyncSelectSearch,
-  getColumnDateTimeAdvancedSearch,
-  getColumnInputSearch,
-  getColumnSelectSearch
-} from "@/utils/tableSearchHelper";
+import { createColumnSearch } from "@/utils/tableSearchHelper";
 import { DeleteOutlined, EditOutlined, EyeOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
@@ -49,11 +44,12 @@ export const createUserColumns = (
     title: t("user.fullname"),
     dataIndex: "ho_va_ten",
     key: "ho_va_ten",
-    ...getColumnInputSearch<IUser>({
+    ...createColumnSearch<IUser>({
       dataIndex: "ho_va_ten",
+      typeSearch: "input",
       onSearch: handleColumnSearch,
-      placeholder: "Tìm họ và tên",
       operator: "contain",
+      placeholder: "Tìm họ và tên",
       showSearch: "both"
     }),
     render: (name, record) => (
@@ -70,8 +66,9 @@ export const createUserColumns = (
     title: t("user.username"),
     dataIndex: "tai_khoan",
     key: "tai_khoan",
-    ...getColumnInputSearch<IUser>({
+    ...createColumnSearch<IUser>({
       dataIndex: "tai_khoan",
+      typeSearch: "input",
       onSearch: handleColumnSearch,
       operator: "contain",
       placeholder: "Tìm tài khoản",
@@ -82,12 +79,13 @@ export const createUserColumns = (
     title: t("user.role"),
     dataIndex: "ma_vai_tro",
     key: "ma_vai_tro",
-    ...getColumnAsyncSelectSearch<IUser>({
-      dataIndex: "ma_vai_tro",
-      placeholder: "Tìm vai trò",
-      fetchData: optionsApi.getRoles,
+    ...createColumnSearch<IUser>({
+      dataIndex: "users.ma_vai_tro",
+      typeSearch: "asyncSelect",
       onSearch: handleColumnSearch,
       operator: "equal",
+      fetchData: optionsApi.getRoles,
+      placeholder: "Tìm vai trò",
       showSearch: "both"
     }),
     render: (role: string) => <Tag color={getRoleColor(role)}>{role?.toUpperCase()}</Tag>,
@@ -97,8 +95,9 @@ export const createUserColumns = (
     title: t("table.status"),
     key: "trang_thai",
     dataIndex: "trang_thai",
-    ...getColumnSelectSearch<IUser>({
-      dataIndex: "trang_thai",
+    ...createColumnSearch<IUser>({
+      dataIndex: "users.trang_thai",
+      typeSearch: "select",
       options: [
         { label: "Hoạt động", value: 1 },
         { label: "Không hoạt động", value: "0" }
@@ -117,8 +116,9 @@ export const createUserColumns = (
     title: t("user.createdAt"),
     dataIndex: "ngay_tao",
     key: "ngay_tao",
-    ...getColumnDateTimeAdvancedSearch<IUser>({
+    ...createColumnSearch<IUser>({
       dataIndex: "users.ngay_tao",
+      typeSearch: "dateRange",
       onSearch: handleColumnSearch,
       operator: "between",
       showSearch: "both"
