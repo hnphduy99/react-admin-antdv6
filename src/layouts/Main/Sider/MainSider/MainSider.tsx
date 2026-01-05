@@ -20,7 +20,7 @@ const MainSider = () => {
         trigger={null}
         collapsed={collapsed}
         collapsedWidth={isMobile ? 0 : 80}
-        className="fixed! overflow-visible z-6 min-h-screen max-h-screen text-secondary-500 md:right-[unset] md:left-0 xl:relative!"
+        className="fixed overflow-visible z-6 min-h-screen max-h-screen text-secondary-500 md:right-[unset] md:left-0 xl:relative"
         width={260}
       >
         <SiderLogo />

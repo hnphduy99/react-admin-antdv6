@@ -1,3 +1,7 @@
+@layer theme, base, reset, antd, components, utilities;
+
+@import url(antd/dist/reset.css) layer(reset);
+
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -35,13 +39,6 @@
 :root {
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -126,15 +123,15 @@ body {
 }
 
 .ant-table-body::-webkit-scrollbar-thumb {
-  @apply rounded! cursor-pointer!;
+  @apply rounded cursor-pointer;
 }
 
 .ant-table-cell-scrollbar {
-  @apply w-0!;
+  @apply w-0;
 }
 
 thead .ant-table-cell {
-  @apply text-center!;
+  @apply text-center;
 }
 
 /* notification */

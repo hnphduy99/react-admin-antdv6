@@ -13,14 +13,14 @@ const ProfileNav = () => {
     {
       key: "personal-info",
       label: t("user.personalInfo"),
-      icon: <UserOutlined className="text-orange-500! text-lg" />,
+      icon: <UserOutlined className="text-orange-500 text-lg" />,
       path: `${ROUTE.PROFILE}${ROUTE.PERSONAL_INFO}`,
       iconBg: "bg-orange-50"
     },
     {
       key: "change-password",
       label: t("password.changePassword"),
-      icon: <SafetyOutlined className="text-green-500! text-lg" />,
+      icon: <SafetyOutlined className="text-green-500 text-lg" />,
       path: `${ROUTE.PROFILE}${ROUTE.CHANGE_PASSWORD}`,
       iconBg: "bg-green-50"
     }

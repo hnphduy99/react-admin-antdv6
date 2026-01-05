@@ -115,7 +115,7 @@ export default {
     bio: "Bio",
     bioPlaceholder: "Tell us about yourself...",
     uploadButton: "Click to Upload",
-    submitSuccess: "Form submitted successfully!",
+    submitSuccess: "Form submitted successfully",
     resetInfo: "Form reset"
   },
   notification: {
@@ -191,8 +191,8 @@ export default {
     compactMode: "Compact Mode",
     compactModeDesc: "Use smaller spacing and font sizes",
     changeAvatar: "Change Avatar",
-    saveSuccess: "Settings saved successfully!",
-    languageChanged: "Language changed successfully!"
+    saveSuccess: "Settings saved successfully",
+    languageChanged: "Language changed successfully"
   },
   password: {
     changePassword: "Change Password",
@@ -205,8 +205,8 @@ export default {
     currentPassword: "Current Password",
     newPassword: "New Password",
     confirmNewPassword: "Confirm New Password",
-    passwordChanged: "Password changed successfully!",
-    passwordReset: "Password reset successfully!",
+    passwordChanged: "Password changed successfully",
+    passwordReset: "Password reset successfully",
     passwordStrength: "Password Strength",
     weak: "Weak",
     medium: "Medium",
@@ -216,7 +216,7 @@ export default {
     enterNew: "Enter new password",
     confirmNew: "Confirm new password",
     sendResetLink: "Send Reset Link",
-    resetLinkSent: "Reset link sent to your email!",
+    resetLinkSent: "Reset link sent to your email",
     resetLinkSentSubtitle:
       "Please check your inbox and click the link to create a new password. The link will expire in 24 hours.",
     firstLoginTitle: "First Login Security",
@@ -228,12 +228,12 @@ export default {
     emailInvalid: "Please enter a valid email",
     passwordMismatch: "Passwords do not match",
     minLength: "Must be at least {{min}} characters",
-    emailRequired: "Please input your email!",
-    passwordRequired: "Please input your password!",
-    nameRequired: "Please input your name!",
+    emailRequired: "Please input your email",
+    passwordRequired: "Please input your password",
+    nameRequired: "Please input your name",
     registerFailed: "Registration failed. Please try again.",
-    passwordMin: "Password must be at least 6 characters!",
-    confirmPasswordRequired: "Please confirm your password!",
+    passwordMin: "Password must be at least 6 characters",
+    confirmPasswordRequired: "Please confirm your password",
     termsRequired: "You must accept the terms"
   },
   error: {

@@ -18,6 +18,7 @@ export const useTheme = () => {
     () => ({
       algorithm: themeMode === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm,
       token: {
+        fontFamily: "Inter, system-ui, sans-serif",
         colorPrimary: "#0ea5e9",
         colorSuccess: "#22c55e",
         colorWarning: "#f59e0b",

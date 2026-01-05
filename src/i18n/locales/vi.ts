@@ -130,7 +130,7 @@ export default {
     bio: "Tiểu sử",
     bioPlaceholder: "Giới thiệu về bạn...",
     uploadButton: "Nhấn để tải lên",
-    submitSuccess: "Gửi biểu mẫu thành công!",
+    submitSuccess: "Gửi biểu mẫu thành công",
     resetInfo: "Đã đặt lại biểu mẫu"
   },
   notification: {
@@ -209,8 +209,8 @@ export default {
     compactMode: "Chế độ gọn",
     compactModeDesc: "Sử dụng khoảng cách và kích thước phông chữ nhỏ hơn",
     changeAvatar: "Thay đổi ảnh đại diện",
-    saveSuccess: "Lưu cài đặt thành công!",
-    languageChanged: "Thay đổi ngôn ngữ thành công!"
+    saveSuccess: "Lưu cài đặt thành công",
+    languageChanged: "Thay đổi ngôn ngữ thành công"
   },
   password: {
     changePassword: "Đổi mật khẩu",
@@ -223,8 +223,8 @@ export default {
     currentPassword: "Mật khẩu hiện tại",
     newPassword: "Mật khẩu mới",
     confirmNewPassword: "Xác nhận mật khẩu mới",
-    passwordChanged: "Đổi mật khẩu thành công!",
-    passwordReset: "Đặt lại mật khẩu thành công!",
+    passwordChanged: "Đổi mật khẩu thành công",
+    passwordReset: "Đặt lại mật khẩu thành công",
     passwordStrength: "Độ mạnh mật khẩu",
     weak: "Yếu",
     medium: "Trung bình",
@@ -245,12 +245,12 @@ export default {
     emailInvalid: "Vui lòng nhập email hợp lệ",
     passwordMismatch: "Mật khẩu không khớp",
     minLength: "Phải có ít nhất {{min}} ký tự",
-    emailRequired: "Vui lòng nhập email!",
-    passwordRequired: "Vui lòng nhập mật khẩu!",
-    nameRequired: "Vui lòng nhập tên!",
+    emailRequired: "Vui lòng nhập email",
+    passwordRequired: "Vui lòng nhập mật khẩu",
+    nameRequired: "Vui lòng nhập tên",
     registerFailed: "Đăng ký thất bại. Vui lòng thử lại.",
-    passwordMin: "Mật khẩu phải có ít nhất 6 ký tự!",
-    confirmPasswordRequired: "Vui lòng xác nhận mật khẩu!",
+    passwordMin: "Mật khẩu phải có ít nhất 6 ký tự",
+    confirmPasswordRequired: "Vui lòng xác nhận mật khẩu",
     termsRequired: "Bạn phải chấp nhận điều khoản"
   },
   error: {
