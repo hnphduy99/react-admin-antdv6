@@ -3,10 +3,10 @@ import type { PaginationConfig } from "@/hooks/useCrudManagement";
 import type { ColumnSearchValue } from "@/interfaces/searchTable.interface";
 import type { IUser } from "@/interfaces/user.interface";
 import {
-  getColumnAsyncSelectProps,
-  getColumnDateTimeAdvancedProps,
-  getColumnInputSearchProps,
-  getColumnSelectProps
+  getColumnAsyncSelectSearch,
+  getColumnDateTimeAdvancedSearch,
+  getColumnInputSearch,
+  getColumnSelectSearch
 } from "@/utils/tableSearchHelper";
 import { DeleteOutlined, EditOutlined, EyeOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Tag } from "antd";
@@ -49,7 +49,7 @@ export const createUserColumns = (
     title: t("user.fullname"),
     dataIndex: "ho_va_ten",
     key: "ho_va_ten",
-    ...getColumnInputSearchProps<IUser>({
+    ...getColumnInputSearch<IUser>({
       dataIndex: "ho_va_ten",
       onSearch: handleColumnSearch,
       placeholder: "Tìm họ và tên",
@@ -70,7 +70,7 @@ export const createUserColumns = (
     title: t("user.username"),
     dataIndex: "tai_khoan",
     key: "tai_khoan",
-    ...getColumnInputSearchProps<IUser>({
+    ...getColumnInputSearch<IUser>({
       dataIndex: "tai_khoan",
       onSearch: handleColumnSearch,
       operator: "contain",
@@ -82,7 +82,7 @@ export const createUserColumns = (
     title: t("user.role"),
     dataIndex: "ma_vai_tro",
     key: "ma_vai_tro",
-    ...getColumnAsyncSelectProps<IUser>({
+    ...getColumnAsyncSelectSearch<IUser>({
       dataIndex: "ma_vai_tro",
       placeholder: "Tìm vai trò",
       fetchData: optionsApi.getRoles,
@@ -97,7 +97,7 @@ export const createUserColumns = (
     title: t("table.status"),
     key: "trang_thai",
     dataIndex: "trang_thai",
-    ...getColumnSelectProps<IUser>({
+    ...getColumnSelectSearch<IUser>({
       dataIndex: "trang_thai",
       options: [
         { label: "Hoạt động", value: 1 },
@@ -117,9 +117,8 @@ export const createUserColumns = (
     title: t("user.createdAt"),
     dataIndex: "ngay_tao",
     key: "ngay_tao",
-    ...getColumnDateTimeAdvancedProps<IUser>({
+    ...getColumnDateTimeAdvancedSearch<IUser>({
       dataIndex: "users.ngay_tao",
-      mode: "range",
       onSearch: handleColumnSearch,
       operator: "between",
       showSearch: "both"

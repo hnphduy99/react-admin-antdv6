@@ -151,6 +151,33 @@ export function TopSearchBar({ configs, onSearch }: TopSearchBarProps) {
     );
   };
 
+  const renderNumberRange = (config: TopSearchConfig) => {
+    const valueString = values[config.dataIndex] as string | null;
+    let value = [null, null];
+    try {
+      if (valueString) value = JSON.parse(valueString);
+    } catch {
+      // ignore
+    }
+
+    return (
+      <Space.Compact key={config.dataIndex}>
+        <InputNumber
+          placeholder="Min"
+          value={value[0]}
+          onChange={(v) => setValue(config.dataIndex, JSON.stringify([v ?? "", value[1] ?? ""]))}
+          className="w-24"
+        />
+        <InputNumber
+          placeholder="Max"
+          value={value[1]}
+          onChange={(v) => setValue(config.dataIndex, JSON.stringify([value[0] ?? "", v ?? ""]))}
+          className="w-24"
+        />
+      </Space.Compact>
+    );
+  };
+
   const renderFilter = (config: TopSearchConfig) => {
     switch (config.type) {
       case "input":
@@ -165,6 +192,8 @@ export function TopSearchBar({ configs, onSearch }: TopSearchBarProps) {
         return renderDate(config);
       case "dateRange":
         return renderDateRange(config);
+      case "numberRange":
+        return renderNumberRange(config);
       default:
         return null;
     }

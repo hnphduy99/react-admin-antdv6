@@ -8,7 +8,7 @@ export interface ColumnSearchValue {
 
 export interface TopSearchConfig {
   dataIndex: string;
-  type: "input" | "number" | "select" | "date" | "dateRange" | "asyncSelect";
+  type: "input" | "number" | "select" | "date" | "dateRange" | "asyncSelect" | "numberRange";
   placeholder?: string;
   options?: Array<{ label: string; value: string | number }>;
   operator?: SearchOperator;

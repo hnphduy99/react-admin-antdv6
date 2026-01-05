@@ -18,17 +18,39 @@ export function NumberRangeFilterAdvanced({
   setSelectedKeys,
   placeholder
 }: NumberRangeFilterAdvancedProps) {
-  const condition = selectedKeys[0]?.condition ?? "<";
-  const value = selectedKeys[0]?.value ?? null;
-  const value2 = selectedKeys[0]?.value2 ?? null;
+  const parseValue = () => {
+    const data = selectedKeys?.[0];
+    const condition = data?.condition ?? "<";
+    const v = data?.value;
+    let v1 = v;
+    let v2 = null;
+
+    if (typeof v === "string" && v.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(v);
+        if (Array.isArray(parsed)) {
+          v1 = parsed[0] !== "" ? Number(parsed[0]) : null;
+          v2 = parsed[1] !== "" ? Number(parsed[1]) : null;
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    return { condition, value: v1, value2: v2 };
+  };
+
+  const { condition, value, value2 } = parseValue();
 
   const update = (patch: any) => {
+    const nextCondition = patch.condition ?? condition;
+    const v1 = "value" in patch ? patch.value : value;
+    const v2 = "value2" in patch ? patch.value2 : value2;
+
     setSelectedKeys([
       {
-        condition,
-        value,
-        value2,
-        ...patch
+        condition: nextCondition,
+        value: nextCondition === "between" ? JSON.stringify([v1 ?? "", v2 ?? ""]) : v1
       }
     ]);
   };

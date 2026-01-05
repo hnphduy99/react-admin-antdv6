@@ -1,11 +1,7 @@
 import type { PaginationConfig } from "@/hooks/useCrudManagement";
 import type { IProduct } from "@/interfaces/product.interface";
 import type { ColumnSearchValue } from "@/interfaces/searchTable.interface";
-import {
-  getColumnDateTimeProps,
-  getColumnInputSearchProps,
-  getColumnNumberRangeProps
-} from "@/utils/tableSearchHelper";
+import { getColumnDateTimeSearch, getColumnInputSearch, getColumnNumberRangeSearch } from "@/utils/tableSearchHelper";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
@@ -47,7 +43,7 @@ export const createProductColumns = (
     title: t("product.productName"),
     dataIndex: "name",
     key: "name",
-    ...getColumnInputSearchProps<IProduct>({
+    ...getColumnInputSearch<IProduct>({
       dataIndex: "name",
       placeholder: t("product.searchProduct"),
       onSearch: handleColumnSearch,
@@ -60,10 +56,8 @@ export const createProductColumns = (
     title: t("product.price"),
     dataIndex: "price",
     key: "price",
-    ...getColumnNumberRangeProps<IProduct>({
+    ...getColumnNumberRangeSearch<IProduct>({
       dataIndex: "price",
-      minPlaceholder: t("product.minPrice"),
-      maxPlaceholder: t("product.maxPrice"),
       onSearch: handleColumnSearch,
       operator: "between",
       showSearch: "top"
@@ -114,7 +108,7 @@ export const createProductColumns = (
     title: t("product.created"),
     dataIndex: "createdAt",
     key: "createdAt",
-    ...getColumnDateTimeProps<IProduct>({
+    ...getColumnDateTimeSearch<IProduct>({
       dataIndex: "createdAt",
       placeholder: "Ngày tạo",
       mode: "single",
