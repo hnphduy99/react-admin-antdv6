@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 export const formatter: InputNumberProps<number>["formatter"] = (value) => {
   const [start, end] = `${value}`.split(".") || [];
   const v = `${start}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return `$ ${end ? `${v}.${end}` : `${v}`}`;
+  return `${end ? `${v}.${end}` : `${v}`}`;
 };
 
 export const parser: InputNumberProps<number>["parser"] = (value: string | undefined) => {

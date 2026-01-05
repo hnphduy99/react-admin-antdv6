@@ -61,8 +61,8 @@ export const createProductColumns = (
       dataIndex: "price",
       onSearch: handleColumnSearch,
       operator: "between",
-      showSearch: "top",
-      typeSearch: "numberRange"
+      showSearch: "both",
+      typeSearch: "number"
     }),
     render: (price) => price.toFixed(2),
     align: "right",

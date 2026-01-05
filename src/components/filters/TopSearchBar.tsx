@@ -163,16 +163,20 @@ export function TopSearchBar({ configs, onSearch }: TopSearchBarProps) {
     return (
       <Space.Compact key={config.dataIndex}>
         <InputNumber
-          placeholder="Min"
+          placeholder="Từ"
           value={value[0]}
+          formatter={formatter}
+          parser={parser}
           onChange={(v) => setValue(config.dataIndex, JSON.stringify([v ?? "", value[1] ?? ""]))}
-          className="w-24"
+          className="w-30"
         />
         <InputNumber
-          placeholder="Max"
+          placeholder="Đến"
           value={value[1]}
+          formatter={formatter}
+          parser={parser}
           onChange={(v) => setValue(config.dataIndex, JSON.stringify([value[0] ?? "", v ?? ""]))}
-          className="w-24"
+          className="w-30"
         />
       </Space.Compact>
     );

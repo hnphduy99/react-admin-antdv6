@@ -3,7 +3,7 @@ import {
   AsyncSelectFilter,
   DateTimeFilterAdvanced,
   InputFilter,
-  NumberRangeFilter,
+  NumberRangeFilterAdvanced,
   SelectFilter
 } from "@/components/filters";
 import type {
@@ -32,12 +32,10 @@ type ICommonFilterParams<T> = IBaseFilterParams<T> &
     | {
         typeSearch: "asyncSelect";
         fetchData: () => Promise<Array<{ label: string; value: any }>>;
-        options?: Array<{ label: string; value: string | number }>;
       }
     | {
         typeSearch: "select";
         options: Array<{ label: string; value: string | number }>;
-        fetchData?: () => Promise<Array<{ label: string; value: any }>>;
       }
     | {
         typeSearch: Exclude<ColumnSearchType, "asyncSelect" | "select">;
@@ -152,9 +150,7 @@ export function createColumnSearch<T>(params: ICommonFilterParams<T>) {
       case "asyncSelect":
         return AsyncSelectFilter;
       case "numberRange":
-        return NumberRangeFilter;
-      // case "dateRange":
-      //   return DateTimeFilter;
+        return NumberRangeFilterAdvanced;
       case "dateRange":
         return DateTimeFilterAdvanced;
       default:
