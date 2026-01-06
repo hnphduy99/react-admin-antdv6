@@ -1,5 +1,6 @@
 import { [componentName]Api } from "@/apis/[componentName].api";
-import { ExportExcel, TableWithPagination } from "@/components/common";
+import ExportExcel from "@/components/common/ExportExcel/ExportExcel";
+import TableWithPagination from "@/components/common/TableWithPagination/TableWithPagination";
 import { TopSearchBar } from "@/components/filters/TopSearchBar";
 import PageTitle from "@/components/PageTitle/PageTitle";
 import { RESOURCE } from "@/configs/api-config";
