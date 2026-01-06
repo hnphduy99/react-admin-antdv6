@@ -1,11 +1,9 @@
-import {
-  ActionFilter,
-  AsyncSelectFilter,
-  DateTimeFilterAdvanced,
-  InputFilter,
-  NumberRangeFilterAdvanced,
-  SelectFilter
-} from "@/components/filters";
+import ActionFilter from "@/components/filters/ActionFilter";
+import { AsyncSelectFilter } from "@/components/filters/AsyncSelectFilter";
+import { DateTimeFilterAdvanced } from "@/components/filters/DateTimeFilterAdvanced";
+import { InputFilter } from "@/components/filters/InputFilter";
+import { NumberRangeFilterAdvanced } from "@/components/filters/NumberRangeFilterAdvanced";
+import { SelectFilter } from "@/components/filters/SelectFilter";
 import type {
   ColumnSearchType,
   ColumnSearchValue,

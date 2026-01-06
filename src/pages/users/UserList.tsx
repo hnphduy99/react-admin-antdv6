@@ -1,5 +1,4 @@
 import { userApi } from "@/apis/user.api";
-import { ExportExcel, TableWithPagination } from "@/components/common";
 import { TopSearchBar } from "@/components/filters/TopSearchBar";
 import PageTitle from "@/components/PageTitle/PageTitle";
 import { RESOURCE } from "@/configs/api-config";
@@ -12,6 +11,8 @@ import { Button, Card, Space } from "antd";
 import { useTranslation } from "react-i18next";
 import { createUserColumns } from "./userColumns";
 import { UserFormModal } from "./UserFormModal";
+import ExportExcel from "@/components/common/ExportExcel/ExportExcel";
+import TableWithPagination from "@/components/common/TableWithPagination/TableWithPagination";
 
 export const UserList = () => {
   const { t } = useTranslation();

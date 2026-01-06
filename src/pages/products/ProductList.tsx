@@ -1,5 +1,4 @@
 import { productApi } from "@/apis/product.api";
-import { ExportExcel, TableWithPagination } from "@/components/common";
 import { TopSearchBar } from "@/components/filters/TopSearchBar";
 import PageTitle from "@/components/PageTitle/PageTitle";
 import { useCrudManagement } from "@/hooks/useCrudManagement";
@@ -10,6 +9,8 @@ import { AppstoreOutlined, DollarOutlined, InboxOutlined, PlusOutlined } from "@
 import { Button, Card, Col, Row, Space, Statistic } from "antd";
 import { useTranslation } from "react-i18next";
 import { createProductColumns } from "./productColumns";
+import ExportExcel from "@/components/common/ExportExcel/ExportExcel";
+import TableWithPagination from "@/components/common/TableWithPagination/TableWithPagination";
 
 export const ProductList = () => {
   const { t } = useTranslation();

@@ -1,5 +1,5 @@
 import type { PaginationConfig } from "@/hooks/useCrudManagement";
-import { Table, type TableProps } from "antd";
+import Table, { type TableProps } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 
 interface TableWithPaginationProps<T> extends TableProps<T> {

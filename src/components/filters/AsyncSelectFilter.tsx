@@ -6,14 +6,14 @@ interface AsyncSelectFilterProps {
   setSelectedKeys: (keys: React.Key[]) => void;
   selectedKeys: React.Key[];
   placeholder?: string;
-  fetchOptions: () => Promise<Array<{ label: string; value: string | number }>>;
+  fetchData: () => Promise<Array<{ label: string; value: string | number }>>;
 }
 
 export const AsyncSelectFilter: React.FC<AsyncSelectFilterProps> = ({
   setSelectedKeys,
   selectedKeys,
   placeholder,
-  fetchOptions
+  fetchData
 }) => {
   const { t } = useTranslation();
   const [options, setOptions] = useState<Array<{ label: string; value: string | number }>>([]);
@@ -22,7 +22,7 @@ export const AsyncSelectFilter: React.FC<AsyncSelectFilterProps> = ({
   const loadOptions = async () => {
     setLoading(true);
     try {
-      const data = await fetchOptions();
+      const data = await fetchData();
       setOptions(data);
     } catch (error) {
       console.error("Failed to load options:", error);

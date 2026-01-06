@@ -105,7 +105,7 @@ export const createUserColumns = (
       onSearch: handleColumnSearch,
       operator: "equal",
       placeholder: "Tìm trạng thái",
-      showSearch: "top"
+      showSearch: "both"
     }),
     render: (status: number) => (
       <Tag color={status === 1 ? "green" : "red"}>{status === 1 ? "HOẠT ĐỘNG" : "KHÔNG HOẠT ĐỘNG"}</Tag>
