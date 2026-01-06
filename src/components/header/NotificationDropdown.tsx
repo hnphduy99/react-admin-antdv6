@@ -3,7 +3,7 @@ import type { Notification } from "@/types";
 import { BellOutlined } from "@ant-design/icons";
 import { Badge, Button, Card, Dropdown, Typography, Spin } from "antd";
 import { useTranslation } from "react-i18next";
-import { mockApi } from "@/services/mock";
+import { notificationApi } from "@/apis/notification.api";
 
 const { Text } = Typography;
 
@@ -17,9 +17,9 @@ export const NotificationDropdown = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await mockApi.notification.getNotifications();
+      const response = await notificationApi.getNotifications();
 
-      if (response.success) {
+      if (response.status) {
         setNotifications(response.data);
       }
     } catch (error) {

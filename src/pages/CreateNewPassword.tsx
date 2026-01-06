@@ -3,7 +3,7 @@ import { Card, Form, Input, Button, message, Progress, Result, Typography } from
 import { LockOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { mockApi } from "@/services/mock";
+import { authApi } from "@/apis/auth.api";
 
 const { Text } = Typography;
 
@@ -48,9 +48,9 @@ export const CreateNewPassword = () => {
       setLoading(true);
 
       // Call API to reset password with token
-      const response = await mockApi.auth.resetPassword(token || "", values.password);
+      const response = await authApi.resetPassword(token || "", values.password);
 
-      if (response.success) {
+      if (response.status) {
         message.success(response.message || t("password.passwordReset"));
         setSuccess(true);
       }

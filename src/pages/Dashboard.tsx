@@ -1,6 +1,6 @@
 import PageTitle from "@/components/PageTitle/PageTitle";
 import { StatCard } from "@/components/StatCard";
-import { mockApi } from "@/services/mock";
+import { dashboardApi, type DashboardStats, type RecentActivity } from "@/apis/dashboard.api";
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -37,25 +37,10 @@ const revenueData = [
   { month: "Jun", revenue: 5500, orders: 349 }
 ];
 
-interface DashboardStats {
-  totalUsers: number;
-  activeUsers: number;
-  totalRevenue: number;
-  totalOrders: number;
-}
-
-interface Activity {
-  id: string;
-  user: string;
-  action: string;
-  timestamp: string;
-  type: string;
-}
-
 const Dashboard = () => {
   const { t } = useTranslation();
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [loadingStats, setLoadingStats] = useState(false);
   const [loadingActivities, setLoadingActivities] = useState(false);
 
@@ -64,8 +49,8 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         setLoadingStats(true);
-        const response = await mockApi.dashboard.getStats();
-        if (response.success) {
+        const response = await dashboardApi.getStats();
+        if (response.status) {
           setStats(response.data);
         }
       } catch (error) {
@@ -78,8 +63,8 @@ const Dashboard = () => {
     const fetchActivities = async () => {
       try {
         setLoadingActivities(true);
-        const response = await mockApi.dashboard.getRecentActivities(5);
-        if (response.success) {
+        const response = await dashboardApi.getRecentActivities(5);
+        if (response.status) {
           setActivities(response.data);
         }
       } catch (error) {

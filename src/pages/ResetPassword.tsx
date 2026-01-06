@@ -2,7 +2,7 @@ import { Card, Form, Input, Button, message, Result, Typography } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { mockApi } from "@/services/mock";
+import { authApi } from "@/apis/auth.api";
 
 const { Text } = Typography;
 
@@ -19,9 +19,9 @@ export const ResetPassword = () => {
       setEmail(values.email);
 
       // Call API to request password reset
-      const response = await mockApi.auth.requestPasswordReset(values.email);
+      const response = await authApi.forgotPassword(values.email);
 
-      if (response.success) {
+      if (response.status) {
         message.success(response.message || "Reset link sent to your email!");
         setEmailSent(true);
       }

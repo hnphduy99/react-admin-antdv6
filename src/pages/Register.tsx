@@ -1,4 +1,4 @@
-import { mockApi } from "@/services/mock";
+import { authApi } from "@/apis/auth.api";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Checkbox, Form, Input, Typography, message } from "antd";
 import { useState } from "react";
@@ -26,9 +26,9 @@ export const Register = () => {
       setLoading(true);
 
       // Call API to register
-      const response = await mockApi.auth.register(values.name, values.email, values.password);
+      const response = await authApi.register(values.name, values.email, values.password);
 
-      if (response.success) {
+      if (response.status) {
         // Auto-login after successful registration
         // dispatch(login(response.data));
 
