@@ -221,8 +221,6 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
-      console.log("🚀 ~ handleModalOk ~ values:", values);
-      return;
       setLoading(true);
 
       const method = editingItem ? apiService.update : apiService.create;
@@ -231,34 +229,34 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
         return;
       }
 
-      // const response = editingItem
-      //   ? await apiService.update!(editingItem.id, values)
-      //   : await apiService.create!(values);
+      const response = editingItem
+        ? await apiService.update!(editingItem.id, values)
+        : await apiService.create!(values);
 
-      // const isSuccess = response?.code === 200;
+      const isSuccess = response?.code === 200;
 
-      // notification[isSuccess ? "success" : "error"]({
-      //   title: isSuccess ? "Success" : "Error",
-      //   description:
-      //     response?.message ||
-      //     (isSuccess
-      //       ? `${entityName} ${editingItem ? "updated" : "created"} successfully`
-      //       : editingItem
-      //         ? `Failed to update ${entityName}`
-      //         : Array.isArray(response?.data)
-      //           ? response.data.join(", ")
-      //           : `Failed to create ${entityName}`)
-      // });
+      notification[isSuccess ? "success" : "error"]({
+        title: isSuccess ? "Success" : "Error",
+        description:
+          response?.message ||
+          (isSuccess
+            ? `${entityName} ${editingItem ? "updated" : "created"} successfully`
+            : editingItem
+              ? `Failed to update ${entityName}`
+              : Array.isArray(response?.data)
+                ? response.data.join(", ")
+                : `Failed to create ${entityName}`)
+      });
 
-      // if (!isSuccess) return;
+      if (!isSuccess) return;
 
-      // if (mode === "page" && basePath) {
-      //   navigate(basePath);
-      // } else {
-      //   setIsModalOpen(false);
-      //   form.resetFields();
-      // }
-      // await fetchData(pagination.current, pagination.limit, columnSearches);
+      if (mode === "page" && basePath) {
+        navigate(basePath);
+      } else {
+        setIsModalOpen(false);
+        form.resetFields();
+      }
+      await fetchData(pagination.current, pagination.limit, columnSearches);
     } catch (error: any) {
       notification.error({
         title: "Error",
