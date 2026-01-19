@@ -66,11 +66,13 @@ export default {
     formExample: "Ví dụ Biểu mẫu",
     users: "Người dùng",
     userList: "Danh sách người dùng",
+    roleList: "Danh sách vai trò",
     userProfile: "Hồ sơ",
     products: "Sản phẩm",
     productList: "Danh sách sản phẩm",
     auth: "Xác thực",
     settings: "Cài đặt",
+    roles: "Vai trò",
     login: "Đăng nhập",
     register: "Đăng ký",
     changePassword: "Đổi mật khẩu",
@@ -211,6 +213,24 @@ export default {
     changeAvatar: "Thay đổi ảnh đại diện",
     saveSuccess: "Lưu cài đặt thành công",
     languageChanged: "Thay đổi ngôn ngữ thành công"
+  },
+  roles: {
+    roles: "Vai trò",
+    resource: "Tài nguyên",
+    roleCode: "Mã vai trò",
+    roleName: "Tên vai trò",
+    enterRoleCode: "Nhập mã vai trò",
+    enterRoleName: "Nhập tên vai trò",
+    createdAt: "Ngày tạo",
+    actions: {
+      index: "Xem DS",
+      create: "Thêm",
+      show: "Xem CT",
+      edit: "Sửa",
+      delete: "Xóa",
+      export: "Xuất",
+      showMenu: "Menu"
+    }
   },
   password: {
     changePassword: "Đổi mật khẩu",

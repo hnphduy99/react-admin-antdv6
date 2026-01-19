@@ -4,6 +4,7 @@ import {
   DashboardOutlined,
   LockOutlined,
   ProductOutlined,
+  SafetyOutlined,
   SettingOutlined,
   TableOutlined,
   UserOutlined
@@ -125,6 +126,13 @@ export const sidebarNavigation: MenuItemData[] = [
         icon: null
       }
     ]
+  },
+  {
+    key: "roles",
+    permissionKey: "roles",
+    label: "menu.roles",
+    icon: <SafetyOutlined />,
+    path: ROUTE.ROLES
   },
   /*new-sidebar-nav-here*/
   {

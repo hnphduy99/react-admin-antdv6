@@ -11,5 +11,6 @@ export const RESOURCE = {
   PROFILE: "/profile",
   CHANGE_PASSWORD: "/profile/change-password",
   USER: "/users"
+  ,ROLES: "/roles",
   /*new-api-path-here*/
 };

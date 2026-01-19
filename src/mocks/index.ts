@@ -1,6 +1,6 @@
+import { RESOURCE } from "@/configs/api-config";
 import axiosInstance from "@/utils/axios";
 import MockAdapter from "axios-mock-adapter";
-import { RESOURCE } from "@/configs/api-config";
 
 export const setupMocks = () => {
   const mock = new MockAdapter(axiosInstance, { delayResponse: 500 });
@@ -250,6 +250,189 @@ export const setupMocks = () => {
     .onPost(RESOURCE.FORGOTPASS)
     .reply(200, { code: 200, status: true, message: "Link đặt lại mật khẩu đã được gửi" });
   mock.onPost(RESOURCE.RESET).reply(200, { code: 200, status: true, message: "Đặt lại mật khẩu thành công" });
+
+  // --- ROLES MOCK ---
+
+  const defaultPermissions = [
+    {
+      name: "users",
+      actions: {
+        index: true,
+        create: true,
+        show: true,
+        edit: true,
+        delete: true,
+        export: true,
+        showMenu: true
+      }
+    },
+    {
+      name: "roles",
+      actions: {
+        index: true,
+        create: true,
+        show: true,
+        edit: true,
+        delete: true,
+        export: true,
+        showMenu: true
+      }
+    },
+    {
+      name: "thong-bao",
+      actions: {
+        index: true,
+        create: true,
+        show: true,
+        edit: true,
+        delete: true,
+        export: true,
+        showMenu: true
+      }
+    },
+    {
+      name: "khach-hang",
+      actions: {
+        index: true,
+        create: true,
+        show: true,
+        edit: true,
+        delete: true,
+        export: true,
+        showMenu: true
+      }
+    },
+    {
+      name: "qua-trinh-khach-hang",
+      actions: {
+        index: true,
+        create: true,
+        show: true,
+        edit: true,
+        delete: true,
+        export: true,
+        showMenu: true
+      }
+    },
+    {
+      name: "trang-thai",
+      actions: {
+        index: true,
+        create: true,
+        show: true,
+        edit: true,
+        delete: true,
+        export: true,
+        showMenu: true
+      }
+    },
+    {
+      name: "dashboard",
+      actions: {
+        index: true,
+        create: true,
+        show: true,
+        edit: true,
+        delete: true,
+        export: true,
+        showMenu: true
+      }
+    },
+    {
+      name: "cong-viec",
+      actions: {
+        index: true,
+        create: true,
+        show: true,
+        edit: true,
+        delete: true,
+        export: true,
+        showMenu: true
+      }
+    }
+  ];
+
+  const rolesList = [
+    {
+      id: 1,
+      ma_vai_tro: "ADMIN",
+      ten_vai_tro: "Quản trị viên",
+      phan_quyen: defaultPermissions,
+      ngay_tao: "2024-01-01T00:00:00.000Z",
+      ngay_cap_nhat: "2024-01-01T00:00:00.000Z"
+    },
+    {
+      id: 2,
+      ma_vai_tro: "USER",
+      ten_vai_tro: "Người dùng",
+      phan_quyen: defaultPermissions.map((p) => ({
+        ...p,
+        actions: { ...p.actions, delete: false, create: false, edit: false }
+      })),
+      ngay_tao: "2024-01-02T00:00:00.000Z",
+      ngay_cap_nhat: "2024-01-02T00:00:00.000Z"
+    }
+  ];
+
+  mock.onPost(`${RESOURCE.ROLES}/default-permission`).reply(200, {
+    code: 200,
+    status: true,
+    data: defaultPermissions
+  });
+
+  mock.onGet(RESOURCE.ROLES).reply((config) => {
+    // Basic pagination mock
+    const { page = 1, limit = 10 } = config.params || {};
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    const pagedRoles = rolesList.slice(start, end);
+
+    return [
+      200,
+      {
+        code: 200,
+        status: true,
+        message: "OK",
+        data: {
+          collection: pagedRoles,
+          total: rolesList.length,
+          current_page: Number(page),
+          last_page: Math.ceil(rolesList.length / limit)
+        }
+      }
+    ];
+  });
+
+  mock.onGet(new RegExp(`${RESOURCE.ROLES}/\\d+`)).reply((config) => {
+    const id = parseInt(config.url!.split("/").pop()!);
+    const role = rolesList.find((r) => r.id === id);
+    return role
+      ? [200, { code: 200, status: true, data: role }]
+      : [404, { code: 404, message: "Không tìm thấy vai trò" }];
+  });
+
+  mock.onPost(RESOURCE.ROLES).reply((config) => {
+    const data = JSON.parse(config.data);
+    const newRole = {
+      ...data,
+      id: Date.now(),
+      ngay_tao: new Date().toISOString(),
+      ngay_cap_nhat: new Date().toISOString()
+    };
+    // In a real mock, you'd push to rolesList, but for static mock responses usually just return success is enough for frontend dev
+    return [200, { code: 200, status: true, message: "Thêm vai trò thành công", data: newRole }];
+  });
+
+  mock.onPatch(new RegExp(`${RESOURCE.ROLES}/\\d+`)).reply((config) => {
+    const data = JSON.parse(config.data);
+    return [200, { code: 200, status: true, message: "Cập nhật vai trò thành công", data }];
+  });
+
+  mock.onDelete(new RegExp(`${RESOURCE.ROLES}/\\d+`)).reply(200, {
+    code: 200,
+    status: true,
+    message: "Xóa vai trò thành công"
+  });
 
   // --- FALLBACK ---
   mock.onAny().passThrough();

@@ -25,6 +25,7 @@ const SettingsPage = lazy(() => import("@/pages/Settings"));
 const NotificationPageContent = lazy(() => import("@/pages/ui/NotificationPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFound"));
 const FirstLoginPage = lazy(() => import("@/components/auth/FirstLogin/FirstLogin"));
+const RolesPage = lazy(() => import("@/pages/roles/RolesList"));
 /*import-component-here*/
 
 const Dashboard = withLoading(DashboardPage);
@@ -42,6 +43,7 @@ const Settings = withLoading(SettingsPage);
 const NotificationPage = withLoading(NotificationPageContent);
 const NotFound = withLoading(NotFoundPage);
 const FirstLogin = withLoading(FirstLoginPage);
+const RolesList = withLoading(RolesPage);
 /*import-component-with-loading-here*/
 
 // Protected Route wrapper
@@ -160,6 +162,14 @@ export const AppRoutes = () => {
             element={
               <PermissionRoute permissionKey={RESOURCE.USER}>
                 <UserList />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path={ROUTE.ROLES}
+            element={
+              <PermissionRoute permissionKey={RESOURCE.ROLES}>
+                <RolesList />
               </PermissionRoute>
             }
           />
