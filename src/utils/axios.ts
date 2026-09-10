@@ -93,11 +93,10 @@ axiosInstance.interceptors.response.use(
           throw new Error(data?.message || "An error occurred. Please try again.");
       }
     } else if (error.request) {
-      throw new Error(error.request || "Network error. Please check your connection.");
+      throw new Error("Network error. Please check your connection.");
     } else {
       throw new Error(error.message || "An unexpected error occurred.");
     }
-
     return Promise.reject(error);
   }
 );
