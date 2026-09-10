@@ -1,9 +1,16 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import themeReducer from "./slices/themeSlice";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { persistReducer, persistStore } from "redux-persist";
 import authReducer from "./slices/authSlice";
 import sidebarReducer from "./slices/sidebarSlice";
+import themeReducer from "./slices/themeSlice";
+
+const storage = {
+  getItem: (key: string) => Promise.resolve(window.localStorage.getItem(key)),
+
+  setItem: (key: string, value: string) => Promise.resolve(window.localStorage.setItem(key, value)),
+
+  removeItem: (key: string) => Promise.resolve(window.localStorage.removeItem(key))
+};
 
 const rootReducer = combineReducers({
   theme: themeReducer,

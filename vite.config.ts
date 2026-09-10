@@ -1,7 +1,7 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import path from "path";
+import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,6 +12,12 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
+        minify: {
+          compress: {
+            dropConsole: true,
+            dropDebugger: true
+          }
+        },
         manualChunks(id) {
           if (id.includes("@ant-design/icons")) return "antd-icons";
           if (id.includes("recharts") || id.includes("d3")) return "charts-vendor";
@@ -30,21 +36,11 @@ export default defineConfig({
         assetFileNames: "assets/[name].[hash].[ext]"
       }
     },
-    minify: "terser",
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      },
-      format: {
-        comments: false
-      }
-    },
     chunkSizeWarningLimit: 1000
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src")
+      "@": path.resolve(import.meta.dirname, "./src")
     }
   }
 });
