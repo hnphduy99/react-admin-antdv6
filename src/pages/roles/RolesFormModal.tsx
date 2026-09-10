@@ -17,61 +17,66 @@ interface RolesFormModalProps {
 
 export const RolesFormModal = ({ t, open, editingItem, loading, form, onOk, onCancel }: RolesFormModalProps) => {
   const [actions, setActions] = useState<string[]>([]);
-
-  const getDefaultPermissions = async () => {
-    const response = await rolesApi.getDefaultPermissions();
-    return response.data as any;
-  };
+  const [permissionsLoaded, setPermissionsLoaded] = useState(false);
 
   useEffect(() => {
-    if (open) {
-      const initForm = async () => {
-        try {
-          const defaultData = await getDefaultPermissions();
-          if (Array.isArray(defaultData) && defaultData.length > 0) {
-            const firstPerm = defaultData[0];
-            if (firstPerm && firstPerm.actions) {
-              setActions(Object.keys(firstPerm.actions));
-            }
-          }
+    if (!open) return;
 
-          if (editingItem) {
-            form.setFieldsValue(editingItem);
-          } else {
-            form.resetFields();
-            form.setFieldsValue({
-              phan_quyen: defaultData
-            });
+    const initForm = async () => {
+      try {
+        setPermissionsLoaded(false);
+
+        const response = await rolesApi.getDefaultPermissions();
+        const defaultData = response.data;
+
+        if (Array.isArray(defaultData) && defaultData.length > 0) {
+          const firstPerm = defaultData[0];
+
+          if (firstPerm?.actions) {
+            setActions(Object.keys(firstPerm.actions));
           }
-        } catch (error) {
-          console.error(error);
         }
-      };
-      initForm();
-    }
+
+        if (editingItem) {
+          form.setFieldsValue(editingItem);
+        } else {
+          form.resetFields();
+
+          form.setFieldsValue({
+            phan_quyen: defaultData
+          });
+        }
+
+        setPermissionsLoaded(true);
+      } catch (error) {
+        console.error(error);
+        setPermissionsLoaded(false);
+      }
+    };
+
+    initForm();
   }, [open, editingItem, form]);
 
   const permissions = Form.useWatch("phan_quyen", form);
 
   const handleCheckAllRow = (index: number, checked: boolean) => {
-    const currentPermissions = form.getFieldValue("phan_quyen");
-    const updatedRow = { ...currentPermissions[index] };
-    const newActions = { ...updatedRow.actions };
+    const currentPermissions = form.getFieldValue("phan_quyen") || [];
+
+    const updatedRow = {
+      ...currentPermissions[index],
+      actions: {
+        ...currentPermissions[index]?.actions
+      }
+    };
 
     actions.forEach((action) => {
-      newActions[action] = checked;
+      updatedRow.actions[action] = checked;
     });
 
-    updatedRow.actions = newActions;
     const newPermissions = [...currentPermissions];
     newPermissions[index] = updatedRow;
-    form.setFieldValue("phan_quyen", newPermissions);
-  };
 
-  const isRowCheckedAll = (index: number) => {
-    if (!permissions || !permissions[index]) return false;
-    const rowActions = permissions[index].actions;
-    return actions.every((action) => rowActions[action]);
+    form.setFieldValue("phan_quyen", newPermissions);
   };
 
   const columns: ColumnsType<any> = [
@@ -103,20 +108,14 @@ export const RolesFormModal = ({ t, open, editingItem, loading, form, onOk, onCa
       )
     })),
     {
-      // title: (
-      //   <Checkbox checked={isGlobalCheckedAll()} onChange={(e) => handleCheckAllGlobal(e.target.checked)}>
-      //     {t("common.selectAll")}
-      //   </Checkbox>
-      // ),
       title: t("common.selectAll"),
       key: "all",
       align: "center" as const,
-      render: (_: any, field: any) => (
-        <Checkbox
-          checked={isRowCheckedAll(field.name)}
-          onChange={(e) => handleCheckAllRow(field.name, e.target.checked)}
-        />
-      )
+      render: (_: any, field: any) => {
+        const rowActions = permissions?.[field.name]?.actions ?? {};
+        const checked = actions.length > 0 && actions.every((action) => rowActions[action]);
+        return <Checkbox checked={checked} onChange={(e) => handleCheckAllRow(field.name, e.target.checked)} />;
+      }
     }
   ];
 
@@ -127,9 +126,11 @@ export const RolesFormModal = ({ t, open, editingItem, loading, form, onOk, onCa
       onOk={onOk}
       onCancel={onCancel}
       confirmLoading={loading}
+      loading={!permissionsLoaded}
       centered
       maskClosable={false}
       width={1000}
+      destroyOnHidden
       okText={t("common.save")}
       cancelText={t("common.cancel")}
     >
@@ -148,11 +149,13 @@ export const RolesFormModal = ({ t, open, editingItem, loading, form, onOk, onCa
         >
           <Input placeholder={t("roles.enterRoleName")} />
         </Form.Item>
-        <Form.List name="phan_quyen">
-          {(fields) => (
-            <Table dataSource={fields} bordered columns={columns} pagination={false} rowKey="key" size="small" />
-          )}
-        </Form.List>
+        {permissionsLoaded && (
+          <Form.List name="phan_quyen">
+            {(fields) => (
+              <Table dataSource={fields} bordered columns={columns} pagination={false} rowKey="key" size="small" />
+            )}
+          </Form.List>
+        )}
       </Form>
     </Modal>
   );
