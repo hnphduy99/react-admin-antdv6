@@ -1,6 +1,6 @@
-import { useMemo, useEffect } from "react";
-import { theme } from "antd";
 import type { ThemeConfig } from "antd";
+import { theme } from "antd";
+import { useEffect, useMemo } from "react";
 import { useAppSelector } from "./useRedux";
 
 export const useTheme = () => {
@@ -68,7 +68,8 @@ export const useTheme = () => {
           colorIcon: themeMode === "dark" ? "#fff" : "#000"
         },
         Form: {
-          verticalLabelPadding: 0
+          verticalLabelPadding: 0,
+          itemMarginBottom: 12
         }
       }
     }),

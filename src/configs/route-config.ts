@@ -8,12 +8,11 @@ export const ROUTE = {
   UPDATE_PASSWORD: "/update-password",
   RESET_PASSWORD: "/reset-password",
   DASHBOARD: "/dashboard",
-  ROLE: "/role",
   USER: "/user",
   PROFILE: "/profile",
   PERSONAL_INFO: "/personal-info",
   NOT_FOUND: "/404",
-  FIRST_LOGIN: "/first-login"
-  ,ROLES: "/roles",
+  FIRST_LOGIN: "/first-login",
+  ROLES: "/roles"
   /*new-route-path-here*/
 };
