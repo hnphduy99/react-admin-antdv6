@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { notificationApi } from "@/apis/notification.api";
 import type { Notification } from "@/types";
 import { BellOutlined } from "@ant-design/icons";
-import { Badge, Button, Card, Dropdown, Typography, Spin } from "antd";
+import { Badge, Button, Card, Dropdown, Spin, Typography } from "antd";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { notificationApi } from "@/apis/notification.api";
 
 const { Text } = Typography;
 
@@ -31,6 +31,7 @@ export const NotificationDropdown = () => {
 
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchNotifications();
     }
   }, [open]);

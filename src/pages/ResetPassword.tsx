@@ -1,8 +1,8 @@
-import { Card, Form, Input, Button, message, Result, Typography } from "antd";
+import { useForgotPasswordMutation } from "@/hooks/queries";
 import { MailOutlined } from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
+import { Button, Card, Form, Input, Result, Typography, message } from "antd";
 import { useState } from "react";
-import { authApi } from "@/apis/auth.api";
+import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
@@ -11,15 +11,12 @@ export const ResetPassword = () => {
   const [form] = Form.useForm();
   const [emailSent, setEmailSent] = useState(false);
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const forgotPasswordMutation = useForgotPasswordMutation();
 
   const onSendEmail = async (values: any) => {
     try {
-      setLoading(true);
       setEmail(values.email);
-
-      // Call API to request password reset
-      const response = await authApi.forgotPassword(values.email);
+      const response = await forgotPasswordMutation.mutateAsync(values.email);
 
       if (response.status) {
         message.success(response.message || "Reset link sent to your email!");
@@ -27,8 +24,6 @@ export const ResetPassword = () => {
       }
     } catch (error: any) {
       message.error(error.message || "Failed to send reset email. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -85,7 +80,7 @@ export const ResetPassword = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" size="large" block loading={loading}>
+          <Button type="primary" htmlType="submit" size="large" block loading={forgotPasswordMutation.isPending}>
             {t("password.sendResetLink")}
           </Button>
         </Form.Item>

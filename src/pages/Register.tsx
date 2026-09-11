@@ -1,7 +1,6 @@
-import { authApi } from "@/apis/auth.api";
+import { useRegisterMutation } from "@/hooks/queries";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Checkbox, Form, Input, Typography, message } from "antd";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -19,26 +18,22 @@ export const Register = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+  const registerMutation = useRegisterMutation();
 
   const handleRegister = async (values: RegisterFormValues) => {
     try {
-      setLoading(true);
-
-      // Call API to register
-      const response = await authApi.register(values.name, values.email, values.password);
+      const response = await registerMutation.mutateAsync({
+        name: values.name,
+        email: values.email,
+        mat_khau: values.password
+      });
 
       if (response.status) {
-        // Auto-login after successful registration
-        // dispatch(login(response.data));
-
         message.success(response.message || t("auth.registerSuccess"));
         navigate("/dashboard");
       }
     } catch (error: any) {
       message.error(error.message || t("validation.registerFailed"));
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -113,7 +108,7 @@ export const Register = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" size="large" block loading={loading}>
+          <Button type="primary" htmlType="submit" size="large" block loading={registerMutation.isPending}>
             {t("auth.createAccount")}
           </Button>
         </Form.Item>

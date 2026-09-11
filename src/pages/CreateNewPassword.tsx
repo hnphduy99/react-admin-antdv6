@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { Card, Form, Input, Button, message, Progress, Result, Typography } from "antd";
+import { useResetPasswordMutation } from "@/hooks/queries";
 import { LockOutlined } from "@ant-design/icons";
+import { Button, Card, Form, Input, Progress, Result, Typography, message } from "antd";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { authApi } from "@/apis/auth.api";
 
 const { Text } = Typography;
 
@@ -14,7 +14,7 @@ export const CreateNewPassword = () => {
   const [form] = Form.useForm();
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const resetPasswordMutation = useResetPasswordMutation();
 
   const calculatePasswordStrength = (password: string): number => {
     let strength = 0;
@@ -45,10 +45,10 @@ export const CreateNewPassword = () => {
 
   const onFinish = async (values: any) => {
     try {
-      setLoading(true);
-
-      // Call API to reset password with token
-      const response = await authApi.resetPassword(token || "", values.password);
+      const response = await resetPasswordMutation.mutateAsync({
+        token: token || "",
+        mat_khau: values.password
+      });
 
       if (response.status) {
         message.success(response.message || t("password.passwordReset"));
@@ -56,8 +56,6 @@ export const CreateNewPassword = () => {
       }
     } catch (error: any) {
       message.error(error.message || "Failed to reset password. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -147,7 +145,7 @@ export const CreateNewPassword = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" size="large" block loading={loading}>
+          <Button type="primary" htmlType="submit" size="large" block loading={resetPasswordMutation.isPending}>
             {t("password.createNewPassword")}
           </Button>
         </Form.Item>

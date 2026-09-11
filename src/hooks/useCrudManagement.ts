@@ -4,8 +4,9 @@ import { PER_PAGE } from "@/constants/constants";
 import type { ColumnSearchValue } from "@/interfaces/searchTable.interface";
 import { useNotification } from "@/providers/NotificationProvider";
 import type { SearchOperator } from "@/types/searchOperator";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Form } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export interface ColumnSearchItem {
@@ -41,8 +42,9 @@ export interface PaginationConfig {
 }
 
 /**
- * Generic CRUD Hook
+ * Generic CRUD Hook (powered by TanStack Query)
  * Reusable hook for all CRUD operations (Create, Read, Update, Delete)
+ * Interface trả về giữ nguyên để không cần thay đổi các page components.
  *
  * @example
  * const userCrud = useCrudManagement({
@@ -53,19 +55,19 @@ export interface PaginationConfig {
  * });
  */
 export const useCrudManagement = <T extends { id: string | number }>(config: CrudConfig<T>) => {
-  const [data, setData] = useState<T[]>([]);
   const [columnSearches, setColumnSearches] = useState<ColumnSearchItem[]>([]);
-  const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<T | null>(null);
-  const [form] = Form.useForm();
   const [pagination, setPagination] = useState<PaginationConfig>({
     current: 1,
     limit: PER_PAGE,
     total: 0
   });
+
+  const [form] = Form.useForm();
   const notification = useNotification();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { apiService, entityName, onView, mode, basePath } = useMemo(
     () => ({
@@ -78,45 +80,119 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
     [config.apiService, config.entityName, config.onView, config.mode, config.basePath]
   );
 
-  // Fetch data from API
-  const fetchData = useCallback(
-    async (page = 1, limit = PER_PAGE, colSearches: ColumnSearchItem[] = []) => {
-      try {
-        if (!apiService.getAll) return;
-        setLoading(true);
-        const response = await apiService.getAll(page, limit, colSearches);
-        const isSuccess = response?.code === 200;
-
-        if (isSuccess) {
-          setData(response.data.collection);
-          setPagination({
-            current: response.data.current_page,
-            limit: PER_PAGE,
-            total: response.data.total
-          });
-        } else {
-          notification.error({ title: "Error", description: response.message || `Failed to load ${entityName}s` });
-          setData([]);
-          setPagination({
-            current: 1,
-            limit: PER_PAGE,
-            total: 0
-          });
-        }
-      } catch (error: any) {
-        notification.error({ title: "Error", description: error.message || `Failed to load ${entityName}s` });
-      } finally {
-        setLoading(false);
-      }
-    },
-    [apiService, entityName, notification]
+  const { current, limit } = pagination;
+  // Unique query key dựa trên entityName + params
+  const listQueryKey = useMemo(
+    () => [entityName, "list", { page: current, limit, columnSearches }],
+    [entityName, current, limit, columnSearches]
   );
 
-  useEffect(() => {
-    fetchData(1, PER_PAGE);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  //useQuery: fetch danh sách
+  const {
+    data: queryData,
+    isFetching: isFetchingList,
+    refetch: refetchList
+  } = useQuery({
+    queryKey: listQueryKey,
+    queryFn: () => {
+      if (!apiService.getAll) return null;
+      return apiService.getAll(pagination.current, pagination.limit, columnSearches);
+    },
+    enabled: !!apiService.getAll,
+    select: (response) => {
+      if (!response) return { collection: [], total: 0, current_page: 1 };
+      if (response.code === 200) {
+        // Cập nhật pagination từ response
+        return response.data;
+      }
+      return { collection: [], total: 0, current_page: 1 };
+    }
+  });
+
+  // Đồng bộ pagination.total từ queryData
+  const data: T[] = (queryData as any)?.collection ?? [];
+  const totalFromServer: number = (queryData as any)?.total ?? 0;
+  const currentPageFromServer: number = (queryData as any)?.current_page ?? 1;
+
+  // Update pagination khi data thay đổi
+  const paginationMerged: PaginationConfig = {
+    current: currentPageFromServer || pagination.current,
+    limit: pagination.limit,
+    total: totalFromServer || pagination.total
+  };
+
+  // Helper để invalidate list query
+  const invalidateList = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: [entityName, "list"] });
+  }, [queryClient, entityName]);
+
+  // Helper: fetch với params mới (thay đổi page/search)
+  const fetchWithParams = useCallback((page: number, limit: number, colSearches: ColumnSearchItem[]) => {
+    setPagination((prev) => ({ ...prev, current: page, limit }));
+    setColumnSearches(colSearches);
+    // useQuery sẽ tự re-fetch khi queryKey thay đổi
   }, []);
 
+  // useMutation: Delete
+  const deleteMutation = useMutation({
+    mutationFn: (id: string | number) => {
+      if (!apiService.delete) throw new Error("Delete not supported");
+      return apiService.delete(id);
+    },
+    onSuccess: (response) => {
+      if (response.code === 200) {
+        notification.success({
+          title: "Success",
+          description: response.message || `${entityName} deleted successfully`
+        });
+        invalidateList();
+      } else {
+        notification.error({
+          title: "Error",
+          description: response.message || `Failed to delete ${entityName}`
+        });
+      }
+    },
+    onError: (error: any) => {
+      notification.error({ title: "Error", description: error.message || `Failed to delete ${entityName}` });
+    }
+  });
+
+  // useMutation: GetById
+  const getByIdMutation = useMutation({
+    mutationFn: (id: string | number) => {
+      if (!apiService.getById) throw new Error("GetById not supported");
+      return apiService.getById(id);
+    },
+    onSuccess: (response) => {
+      if (response.code === 200) {
+        setEditingItem(response.data);
+        form.setFieldsValue(response.data);
+        setIsModalOpen(true);
+      }
+    },
+    onError: (error: any) => {
+      notification.error({ title: "Error", description: error.message || `Failed to load ${entityName}` });
+    }
+  });
+
+  // useMutation: Create
+  const createMutation = useMutation({
+    mutationFn: (data: T) => {
+      if (!apiService.create) throw new Error("Create not supported");
+      return apiService.create(data);
+    }
+  });
+
+  // useMutation: Update
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string | number; data: T }) => {
+      if (!apiService.update) throw new Error("Update not supported");
+      return apiService.update(id, data);
+    }
+  });
+
+  // Handlers
   const applyColumnSearches = useCallback(
     (searches: Record<string, ColumnSearchValue | null>) => {
       let updatedSearches = [...columnSearches];
@@ -141,10 +217,9 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
         }
       });
 
-      setColumnSearches(updatedSearches);
-      fetchData(1, pagination.limit, updatedSearches);
+      fetchWithParams(1, pagination.limit, updatedSearches);
     },
-    [columnSearches, fetchData, pagination.limit]
+    [columnSearches, fetchWithParams, pagination.limit]
   );
 
   const handleColumnSearch = (value: ColumnSearchValue | null, column: string) => {
@@ -157,7 +232,7 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
 
   const handleTableChange = (newPagination: any, _filters: any, _sorter: any, extra: any) => {
     if (extra?.action === "paginate") {
-      fetchData(newPagination.current, newPagination.pageSize, columnSearches);
+      fetchWithParams(newPagination.current, newPagination.pageSize, columnSearches);
     }
   };
 
@@ -176,62 +251,25 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
       navigate(`${basePath}/edit/${id}`);
       return;
     }
-
-    if (!apiService.getById) return;
-
-    try {
-      setLoading(true);
-      const response = await apiService.getById(id);
-
-      if (response.code === 200) {
-        setEditingItem(response.data);
-        form.setFieldsValue(response.data);
-        setIsModalOpen(true);
-      }
-    } catch (error: any) {
-      notification.error({ title: "Error", description: error.message || `Failed to load ${entityName}` });
-    } finally {
-      setLoading(false);
-    }
+    getByIdMutation.mutate(id);
   };
 
-  // Handle delete
   const handleDelete = async (id: string | number) => {
     if (!apiService.delete) return;
-
-    try {
-      setLoading(true);
-      const response = await apiService.delete(id);
-
-      if (response.code === 200) {
-        notification.success({
-          title: "Success",
-          description: response.message || `${entityName} deleted successfully`
-        });
-        await fetchData(pagination.current, pagination.limit, columnSearches);
-      }
-    } catch (error: any) {
-      notification.error({ title: "Error", description: error.message || `Failed to delete ${entityName}` });
-    } finally {
-      setLoading(false);
-    }
+    deleteMutation.mutate(id);
   };
 
   // Handle modal submit (Create or Update)
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
-      setLoading(true);
 
-      const method = editingItem ? apiService.update : apiService.create;
-      if (!method) {
-        setLoading(false);
-        return;
-      }
+      const method = editingItem ? updateMutation : createMutation;
+      if (!method) return;
 
       const response = editingItem
-        ? await apiService.update!(editingItem.id, values)
-        : await apiService.create!(values);
+        ? await updateMutation.mutateAsync({ id: editingItem.id, data: values })
+        : await createMutation.mutateAsync(values);
 
       const isSuccess = response?.code === 200;
 
@@ -255,19 +293,17 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
       } else {
         setIsModalOpen(false);
         form.resetFields();
+        setEditingItem(null);
       }
-      await fetchData(pagination.current, pagination.limit, columnSearches);
+      invalidateList();
     } catch (error: any) {
       notification.error({
         title: "Error",
         description: error?.message || "Operation failed"
       });
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Handle modal cancel
   const handleModalCancel = () => {
     setIsModalOpen(false);
     form.resetFields();
@@ -288,6 +324,14 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
     notification.info({ title: "Info", description: `View ${entityName}: ${(record as any).name || record.id}` });
   };
 
+  // Combined loading state
+  const loading =
+    isFetchingList ||
+    deleteMutation.isPending ||
+    getByIdMutation.isPending ||
+    createMutation.isPending ||
+    updateMutation.isPending;
+
   return {
     // State
     data,
@@ -295,7 +339,7 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
     isModalOpen,
     editingItem,
     form,
-    pagination,
+    pagination: paginationMerged,
 
     // Actions
     handleColumnSearch,
@@ -309,6 +353,6 @@ export const useCrudManagement = <T extends { id: string | number }>(config: Cru
     handleModalCancel,
 
     // Utilities
-    refresh: () => fetchData(pagination.current, pagination.limit, columnSearches)
+    refresh: refetchList
   };
 };

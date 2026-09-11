@@ -128,7 +128,9 @@ export const RolesFormModal = ({ t, open, editingItem, loading, form, onOk, onCa
       confirmLoading={loading}
       loading={!permissionsLoaded}
       centered
-      maskClosable={false}
+      mask={{
+        closable: true
+      }}
       width={1000}
       destroyOnHidden
       okText={t("common.save")}

@@ -1,10 +1,7 @@
-import { authApi } from "@/apis/auth.api";
-import { useAppDispatch } from "@/hooks/useRedux";
+import { useLoginMutation } from "@/hooks/queries";
 import { useNotification } from "@/providers/NotificationProvider";
-import { login } from "@/store/slices/authSlice";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Checkbox, Form, Input, Typography } from "antd";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -19,21 +16,18 @@ interface LoginFormValues {
 export const Login = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
   const notification = useNotification();
+  const loginMutation = useLoginMutation();
 
   const handleLogin = async (values: LoginFormValues) => {
     try {
-      setLoading(true);
-
-      // Call API to authenticate
-      const response = await authApi.login(values.tai_khoan, values.mat_khau);
+      const response = await loginMutation.mutateAsync({
+        tai_khoan: values.tai_khoan,
+        mat_khau: values.mat_khau
+      });
 
       if (response.code === 200) {
-        dispatch(login(response.data));
-
         notification.success({
           title: t("auth.loginSuccess")
         });
@@ -47,8 +41,6 @@ export const Login = () => {
       notification.error({
         title: error.message || t("auth.loginFailed")
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -88,7 +80,7 @@ export const Login = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" size="large" block loading={loading}>
+          <Button type="primary" htmlType="submit" size="large" block loading={loginMutation.isPending}>
             {t("auth.signIn")}
           </Button>
         </Form.Item>

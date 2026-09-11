@@ -21,7 +21,9 @@ export const [ComponentName]FormModal = ({ t, open, editingItem, loading, form, 
       onCancel={onCancel}
       confirmLoading={loading}
       centered
-      maskClosable={false}
+      mask={{
+        closable: true
+      }}
       width={800}
       okText={t("common.save")}
       cancelText={t("common.cancel")}

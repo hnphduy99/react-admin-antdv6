@@ -27,7 +27,9 @@ export const ProductFormModal = ({ open, editingProduct, loading, form, onOk, on
       onCancel={onCancel}
       confirmLoading={loading}
       centered
-      maskClosable={false}
+      mask={{
+        closable: true
+      }}
       width={700}
       okText={t("common.save")}
       cancelText={t("common.cancel")}

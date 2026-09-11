@@ -1,6 +1,6 @@
 import PageTitle from "@/components/PageTitle/PageTitle";
 import { StatCard } from "@/components/StatCard";
-import { dashboardApi, type DashboardStats, type RecentActivity } from "@/apis/dashboard.api";
+import { useDashboardStats, useDashboardActivities } from "@/hooks/queries";
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -10,7 +10,6 @@ import {
   UserOutlined
 } from "@ant-design/icons";
 import { Card, Col, List, Row, Skeleton, Tag, Typography } from "antd";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Bar,
@@ -39,44 +38,9 @@ const revenueData = [
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [activities, setActivities] = useState<RecentActivity[]>([]);
-  const [loadingStats, setLoadingStats] = useState(false);
-  const [loadingActivities, setLoadingActivities] = useState(false);
 
-  // Fetch dashboard stats
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoadingStats(true);
-        const response = await dashboardApi.getStats();
-        if (response.status) {
-          setStats(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching stats:", error);
-      } finally {
-        setLoadingStats(false);
-      }
-    };
-
-    const fetchActivities = async () => {
-      try {
-        setLoadingActivities(true);
-        const response = await dashboardApi.getRecentActivities(5);
-        if (response.status) {
-          setActivities(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching activities:", error);
-      } finally {
-        setLoadingActivities(false);
-      }
-    };
-
-    fetchStats();
-    fetchActivities();
-  }, []);
+  const { data: stats, isLoading: loadingStats } = useDashboardStats();
+  const { data: activities = [], isLoading: loadingActivities } = useDashboardActivities(5);
 
   // Map activity type to status
   const getActivityStatus = (type: string) => {
